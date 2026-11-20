@@ -793,7 +793,7 @@
     },
     {
       "code": "M807",
-      "summary": "Set boolean flag, then report current value; effect not established.",
+      "summary": "Set boolean flag, then report current value; bare M807 reports it; effect not established.",
       "board": "machine",
       "cmd_type": "set",
       "params": [
@@ -807,7 +807,7 @@
         }
       ],
       "danger": "motion",
-      "readback": false,
+      "readback": true,
       "side_effects": [],
       "response": {
         "kind": "line-echo",
@@ -2709,7 +2709,7 @@
     },
     {
       "code": "M856",
-      "summary": "Set uint32 at settings+0x188 and apply via FUN_08025c30.",
+      "summary": "Set uint32 at settings+0x188 and apply via FUN_08025c30; bare M856 reports the current value.",
       "board": "machine",
       "cmd_type": "set",
       "params": [
@@ -2723,7 +2723,7 @@
         }
       ],
       "danger": "motion",
-      "readback": false,
+      "readback": true,
       "side_effects": [],
       "response": {
         "kind": "line-echo",
@@ -3009,7 +3009,7 @@
     },
     {
       "code": "M866",
-      "summary": "Set uint32 at settings+0x48 and apply via FUN_080262dc.",
+      "summary": "Set uint32 at settings+0x48 and apply via FUN_080262dc; bare M866 reports the current value.",
       "board": "machine",
       "cmd_type": "set",
       "params": [
@@ -3023,7 +3023,7 @@
         }
       ],
       "danger": "motion",
-      "readback": false,
+      "readback": true,
       "side_effects": [],
       "response": {
         "kind": "line-echo",
@@ -3039,7 +3039,7 @@
     },
     {
       "code": "M867",
-      "summary": "Set byte at settings+0x38 and apply via FUN_08025ef8/080262c0.",
+      "summary": "Set byte at settings+0x38 and apply via FUN_08025ef8/080262c0; bare M867 reports the current value.",
       "board": "machine",
       "cmd_type": "set",
       "params": [
@@ -3053,7 +3053,7 @@
         }
       ],
       "danger": "motion",
-      "readback": false,
+      "readback": true,
       "side_effects": [],
       "response": {
         "kind": "line-echo",

@@ -457,6 +457,42 @@ def diff_settings(before: Path, after: Path) -> None:
         _fail(error)
 
 
+@settings.command("set")
+def set_setting(
+    ctx: typer.Context,
+    name: str = typer.Argument(..., help="Reviewed setting name (see 'metalfab settings set --help' or the profile listing)."),
+    value: str = typer.Argument(..., help="New value. The firmware clamps out-of-range values."),
+    port: str = typer.Option(...), device_version: str = typer.Option(...),
+    apply: bool = typer.Option(False, "--apply", help="Write the previewed change and verify the result."),
+) -> None:
+    """Preview or apply a reviewed settings change (M800/M801/M802/M807/M856/M859/M866/M867)."""
+    evidence = _evidence(ctx)
+    try:
+        profile = select_profile(evidence, device_version)
+        if not profile.settings:
+            raise DeviceError("No reviewed settings are available for this firmware")
+        if name not in profile.settings:
+            raise DeviceError(f"Unknown setting {name!r}. Reviewed settings: {', '.join(sorted(profile.settings))}")
+        setting = profile.settings[name]
+        if setting.write is None:
+            raise DeviceError(f"Setting {name!r} is read-only; use 'metalfab settings export' to read it")
+        with live_session(port, evidence, profile=profile, baud=profile.baud) as session:
+            _recording(session)
+            current = session.preview_setting(name, value)
+            if current:
+                typer.echo(f"- {name} = {json.dumps(current)}")
+            else:
+                typer.echo(f"Setting {name} has no reviewed getter; the setter response is the verification.")
+            typer.echo(f"+ {name} = {json.dumps(value)}")
+            if not apply:
+                typer.echo("Preview only. Add '--apply' to write and verify the change.")
+                return
+            session.apply_setting(name, value, current or None)
+            typer.echo("Setting verified by read-back." if current else "Setting written; the response carried the applied value.")
+    except EXPECTED_ERRORS as error:
+        _fail(error)
+
+
 @settings.command("set-display")
 def set_display(
     ctx: typer.Context, preference: str, value: str,

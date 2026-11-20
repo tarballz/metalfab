@@ -10,7 +10,7 @@ Run from this directory on macOS. `uv` installs the dependencies and opens the M
 - **Events (F2)** lists live faults, reports, framing issues, and received lines. Select a row for details.
 - **Captures (F3)** opens saved recordings for offline replay or starts a separate timed passive recording. A timed capture returns to passive monitoring when it finishes or you stop it.
 - **Firmware (F4)** reads and saves installed versions, inspects local images or bundles, and compares reviewed stock images with live or saved versions.
-- **Settings (F5)** compares saved snapshots. Live settings depend on reviewed firmware capabilities. The current HJ004 profile has no reviewed settings getters or setters.
+- **Settings (F5)** compares saved snapshots. Live settings depend on reviewed firmware capabilities. The reviewed HJ004 profile carries the settings getters and setters listed under `metalfab settings set`.
 
 Use Tab and Shift+Tab to move between controls, the arrow keys to navigate tables, and F10 to quit and finalize the current recording. If a reviewed request is pending, quitting waits for it to finish or time out.
 
@@ -92,7 +92,16 @@ uv run metalfab firmware update-head firmware/40.71.003 \
 
 Disable lasering before adding `--apply` and keep power and USB connected during the update. The command verifies the stock image, transfers it to the head, then reads the reported version after reboot. The transfer was tested against simulated replies, and its outgoing bytes matched the vendor client in an offline comparison. A physical flash and interrupted-transfer recovery remain untested.
 
-`settings export` uses reviewed getters. `settings set-display` previews changes to `language` and `imperial_units` once their handlers and responses are established. `--apply` rechecks the current value before sending the setter, then reads the value back. There are currently no reviewed getters or setters for these preferences.
+`settings export` reads the reviewed getters (M804/M805, M810-M813, M815, M817,
+M818, M829, M831-M833, M840, M845, M848, M857, M864, M865) into a JSON
+snapshot. `settings set NAME VALUE` previews a reviewed change; `--apply`
+rechecks the current value, sends once, and verifies the result, either through
+the setting's bare readback form or the setter's own clamped-value response.
+Reviewed setters: M800 (`laser_power`), M801 (`feed_speed`), M802
+(`focus_correction`), M807, M856, M859 (via `metalfab cnc`), M866, M867. The
+offset-named settings keep their offsets until live use identifies them.
+`settings set-display` previews changes to `language` and `imperial_units` once
+their handlers and responses are established.
 
 Part 1 owns `commands.json`, `faults.json`, `status.json`, and the protocol notes. Record live confirmation in `data/verified-overlay.json` using `verified_by` to identify the capture. Transmission eligibility comes from the reviewed profile in the source code.
 

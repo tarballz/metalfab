@@ -2,7 +2,7 @@
 
 from collections import deque
 from contextlib import contextmanager
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 import fcntl
 from pathlib import Path
 import re
@@ -91,6 +91,21 @@ class DisplayPreference:
 
 
 @dataclass(frozen=True)
+class Setting:
+    """A reviewed settings capability: optional getter and parameterized setter.
+
+    The setter wire is a template whose `{value}` token the caller substitutes
+    (e.g. "M800 A{value}"); the reviewed literal is the template itself, and
+    the gate validates the substituted wire against the registry. A Setting
+    with only `read` is a getter; one with only `write` verifies through the
+    setter's own value response (M800/M801/M802 print their clamped result).
+    """
+
+    read: Request | None = None
+    write: Request | None = None
+
+
+@dataclass(frozen=True)
 class Profile:
     """Capabilities reviewed against one exact HJ004 machine firmware image."""
 
@@ -98,7 +113,7 @@ class Profile:
     image_hash: str
     baud: int = DEFAULT_BAUD
     status: Request | None = None
-    settings: dict[str, Request] = field(default_factory=dict)
+    settings: dict[str, Setting] = field(default_factory=dict)
     display: dict[str, DisplayPreference] = field(default_factory=dict)
     versions: Request | None = None
     jobs: Request | None = None
@@ -134,6 +149,44 @@ REVIEWED_PROFILES = (
             {"on": Request("M859 A1", "ack", danger="motion"),
              "off": Request("M859 A0", "ack", danger="motion")},
         ),
+        # Reviewed settings, named by what the handlers provably do. Names for
+        # the offset getters stay offset-based until live use settles them.
+        settings={
+            # Getters (formats verified against handlers.tsv and the decompiles).
+            "settings_1ac": Setting(read=Request("M804", "value")),
+            "six_values": Setting(read=Request("M805", "block", block_start="M805")),
+            "state_810": Setting(read=Request("M810", "value")),
+            "status_811": Setting(read=Request("M811", "block", block_start="M811")),
+            "state_812": Setting(read=Request("M812", "value")),
+            "status_813": Setting(read=Request("M813", "block", block_start="M813")),
+            "setting_388": Setting(read=Request("M815", "value")),
+            "ntc_temperature": Setting(read=Request("M817", "value")),
+            "status_818": Setting(read=Request("M818", "block", block_start="M818")),
+            "status_829": Setting(read=Request("M829", "block", block_start="M829")),
+            "float_831": Setting(read=Request("M831", "value")),
+            "channels_832": Setting(read=Request("M832", "block", block_start="M832")),
+            "float_833": Setting(read=Request("M833", "value")),
+            "status_840": Setting(read=Request("M840", "block", block_start="M840")),
+            "status_845": Setting(read=Request("M845", "block", block_start="M845")),
+            "status_848": Setting(read=Request("M848", "block", block_start="M848")),
+            "setting_1b4": Setting(read=Request("M857", "value")),
+            "state_864": Setting(read=Request("M864", "value")),
+            "state_865": Setting(read=Request("M865", "value")),
+            # Setters whose own response prints the clamped applied value
+            # (M800/M801/M802), so the write response is the read-back.
+            "laser_power": Setting(write=Request("M800 A{value}", "value", echo="M800", danger="motion")),
+            "feed_speed": Setting(write=Request("M801 A{value}", "value", echo="M801", danger="motion")),
+            "focus_correction": Setting(write=Request("M802 A{value}", "value", echo="M802", danger="motion")),
+            # Setters whose bare form reports the current value.
+            "flag_807": Setting(read=Request("M807", "value"),
+                                write=Request("M807 A{value}", "value", echo="M807", danger="motion")),
+            "setting_188": Setting(read=Request("M856", "value"),
+                                   write=Request("M856 A{value}", "value", echo="M856", danger="motion")),
+            "setting_48": Setting(read=Request("M866", "value"),
+                                  write=Request("M866 A{value}", "value", echo="M866", danger="motion")),
+            "setting_38": Setting(read=Request("M867", "value"),
+                                  write=Request("M867 A{value}", "value", echo="M867", danger="motion")),
+        },
     ),
 )
 
@@ -396,22 +449,73 @@ class Session:
             raise DeviceError("No reviewed status trigger is available for this session")
         return self._request(self._profile.status, command_type="get", response="report")
 
-    def _read_named(self, requests: dict[str, Request]) -> dict[str, str]:
-        for spec in requests.values():
-            self._check(spec, command_type="get", response="value")
-        return {
-            key: self._request(spec, command_type="get", response="value")
-            for key, spec in requests.items()
-        }
+    def _read_setting_getter(self, name: str, spec: Request) -> str:
+        """Run one reviewed settings getter; blocks return their lines joined."""
+        if spec.response == "block":
+            self._check(spec, command_type="get", response="block")
+            return "\n".join(self.read_block(spec)["lines"])
+        self._check(spec, command_type="get", response="value")
+        return self._request(spec, command_type="get", response="value")
 
     def snapshot(self) -> dict[str, str]:
-        """Read only the settings with reviewed getter requests."""
-        getters = dict(self._profile.settings) if self._profile else {}
-        if self._profile:
-            getters.update({key: preference.read for key, preference in self._profile.display.items()})
-        if not getters:
+        """Read every reviewed settings getter and display preference."""
+        if self._profile is None:
             raise DeviceError("No reviewed settings getters are available")
-        return self._read_named(getters)
+        results: dict[str, str] = {}
+        for key, setting in self._profile.settings.items():
+            if setting.read is not None:
+                results[key] = self._read_setting_getter(key, setting.read)
+        for key, preference in self._profile.display.items():
+            results[key] = self._request(preference.read, command_type="get", response="value")
+        if not results:
+            raise DeviceError("No reviewed settings getters are available")
+        return results
+
+    def _setting(self, name: str, value: str) -> tuple[Setting, Request]:
+        """Validate a proposed change and substitute the value into the template."""
+        setting = self._profile.settings.get(name) if self._profile else None
+        if setting is None or setting.write is None or "{value}" not in setting.write.wire:
+            raise DeviceError(f"No reviewed settings setter is available for {name}")
+        wire = setting.write.wire.replace("{value}", value)
+        write = replace(setting.write, wire=wire)
+        self._check(write, command_type="set", response=write.response)
+        if setting.read is not None:
+            self._check(setting.read, command_type="get", response=setting.read.response)
+        return setting, write
+
+    def preview_setting(self, name: str, value: str) -> str:
+        """Read the current value for a proposed, validated change."""
+        setting, _ = self._setting(name, value)
+        if setting.read is None:
+            return ""
+        return self._read_setting_getter(name, setting.read)
+
+    def apply_setting(self, name: str, value: str, expected: str | None) -> None:
+        """Confirm the previewed state, send once, then verify the new state."""
+        setting, write = self._setting(name, value)
+        target = write.wire.split()[-1]
+        if setting.read is not None:
+            # The preview check runs before any write: nothing has been sent,
+            # so the state is known, not uncertain.
+            if expected is None:
+                raise DeviceError(f"{name} requires a preview before applying.")
+            current = self._read_setting_getter(name, setting.read)
+            if current != expected:
+                raise DeviceError(f"{name} changed since preview. Run the preview again.")
+            if current == target:
+                return
+        try:
+            self._request(write, command_type="set", response=write.response)
+            if setting.read is not None:
+                actual = self._read_setting_getter(name, setting.read)
+                if actual != target:
+                    raise DeviceError(f"Read-back returned {actual!r}")
+            # With no getter, the setter's own response carries the applied
+            # (clamped) value and there is nothing further to verify.
+        except (DeviceError, OSError, KeyboardInterrupt) as error:
+            raise UncertainWrite(
+                f"The outcome of the {name} write is uncertain. Check the touchscreen before trying again."
+            ) from error
 
     def installed_versions(self) -> dict[str, BoardVersion]:
         """Read all four installed application versions and available bootloader versions."""

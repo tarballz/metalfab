@@ -54,7 +54,7 @@ SEMANTICS: dict[str, dict] = {
     "M804": {"summary": "Read integer value from settings struct (+0x1ac).", "cmd_type": "get", "danger": "none"},
     "M805": {"summary": "Read six values from the settings struct.", "cmd_type": "get", "danger": "none"},
     "M806": {"summary": "Echo-only handler; returns the received command buffer.", "cmd_type": "get", "danger": "none"},
-    "M807": {"summary": "Set boolean flag, then report current value; effect not established.", "cmd_type": "set", "danger": "motion"},
+    "M807": {"summary": "Set boolean flag, then report current value; bare M807 reports it; effect not established.", "cmd_type": "set", "danger": "motion", "readback": True},
     "M808": {"summary": "Full status report: Device (STA) and Raycus (STR) sections.", "cmd_type": "get", "danger": "none"},
     "M810": {"summary": "Read state value via FUN_080060b4.", "cmd_type": "get", "danger": "none"},
     "M811": {"summary": "Read five status values via state getters.", "cmd_type": "get", "danger": "none"},
@@ -81,7 +81,7 @@ SEMANTICS: dict[str, dict] = {
     "M853": {"summary": "Set four uint16 values via FUN_08025e24.", "cmd_type": "set", "danger": "motion"},
     "M854": {"summary": "Set byte plus three uint16 values via FUN_08025e68.", "cmd_type": "set", "danger": "motion"},
     "M855": {"summary": "Set 0/1 mode via FUN_08025c78.", "cmd_type": "set", "danger": "motion"},
-    "M856": {"summary": "Set uint32 at settings+0x188 and apply via FUN_08025c30.", "cmd_type": "set", "danger": "motion"},
+    "M856": {"summary": "Set uint32 at settings+0x188 and apply via FUN_08025c30; bare M856 reports the current value.", "cmd_type": "set", "danger": "motion", "readback": True},
     "M857": {"summary": "Read integer at settings+0x1b4.", "cmd_type": "get", "danger": "none"},
     "M858": {"summary": "Get or set byte via FUN_08025ee0.", "cmd_type": "set", "danger": "motion"},
     "M859": {"summary": "Board key / CNC enable toggle (0/1) with readback; bare M859 reports the current state; can enable external control.", "cmd_type": "set", "danger": "motion", "readback": True},
@@ -91,8 +91,8 @@ SEMANTICS: dict[str, dict] = {
     "M863": {"summary": "Set boolean triple via FUN_08025f04/08025fac/0802b6a0.", "cmd_type": "set", "danger": "motion"},
     "M864": {"summary": "Read state value via FUN_0800b354.", "cmd_type": "get", "danger": "none"},
     "M865": {"summary": "Read state value via FUN_0800b3e6.", "cmd_type": "get", "danger": "none"},
-    "M866": {"summary": "Set uint32 at settings+0x48 and apply via FUN_080262dc.", "cmd_type": "set", "danger": "motion"},
-    "M867": {"summary": "Set byte at settings+0x38 and apply via FUN_08025ef8/080262c0.", "cmd_type": "set", "danger": "motion"},
+    "M866": {"summary": "Set uint32 at settings+0x48 and apply via FUN_080262dc; bare M866 reports the current value.", "cmd_type": "set", "danger": "motion", "readback": True},
+    "M867": {"summary": "Set byte at settings+0x38 and apply via FUN_08025ef8/080262c0; bare M867 reports the current value.", "cmd_type": "set", "danger": "motion", "readback": True},
     "M869": {"summary": "Acknowledged no-op / keepalive.", "cmd_type": "get", "danger": "none"},
 }
 
