@@ -107,6 +107,8 @@ def _load_commands(data: dict) -> tuple[dict, str]:
         _require(command["cmd_type"] in ("get", "set", "action"), f"Invalid type for {code}")
         _require(command["danger"] in ("none", "motion", "emission", "destructive"), f"Invalid danger for {code}")
         _require(command["confidence"] in ("high", "medium", "low", "unknown"), f"Invalid confidence for {code}")
+        if command.get("readback") is not None:
+            _require(type(command["readback"]) is bool, f"Invalid readback flag for {code}")
         _text(command["board"])
         _text(command["summary"])
         for param in _array(command["params"]):

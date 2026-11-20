@@ -72,6 +72,9 @@ class Request:
     report_start: str | None = None
     block_start: str | None = None
     block_end: str | None = None
+    # The danger class this reviewed literal was cleared for. The registry
+    # cross-checks it, and the gate only ever admits "none" and "motion".
+    danger: str = "none"
 
     @property
     def tokens(self) -> list[str]:
@@ -100,6 +103,7 @@ class Profile:
     versions: Request | None = None
     jobs: Request | None = None
     logs: Request | None = None
+    cnc: DisplayPreference | None = None
 
 
 @dataclass(frozen=True)
@@ -122,6 +126,14 @@ REVIEWED_PROFILES = (
         jobs=Request("M350", "block", block_start="Index file content:"),
         logs=Request("M351", "block", block_start="=== System Log Records",
                      block_end="=== End of Log Records ==="),
+        # Bare M859 reads the CNC-mode state; A1/A0 enable/disable machining
+        # mode (FUN_080292e4). Episodes exit CNC mode and nothing re-enables
+        # it automatically, so this is the reviewed way back in.
+        cnc=DisplayPreference(
+            Request("M859", "value"),
+            {"on": Request("M859 A1", "ack", danger="motion"),
+             "off": Request("M859 A0", "ack", danger="motion")},
+        ),
     ),
 )
 
@@ -252,8 +264,17 @@ class Session:
             raise DeviceError("Invalid framing in the reviewed request")
         code = parts[0]
         entry = self._evidence.commands.get(code)
-        if (not entry or entry["board"] != "machine" or entry["danger"] != "none"
-                or entry["confidence"] != "high" or entry["cmd_type"] != command_type
+        # A reviewed getter may ride a setter whose handler reports its current
+        # value (readback), e.g. bare M859; the registry says so explicitly.
+        # The bare read performs no write, so it clears as danger "none" while
+        # the setter form keeps its declared class.
+        readback_getter = entry is not None and command_type == "get" and entry.get("readback") is True
+        kind_ok = entry is not None and (entry["cmd_type"] == command_type or readback_getter)
+        danger_ok = entry is not None and (entry["danger"] == spec.danger
+                                           or (readback_getter and spec.danger == "none"))
+        if (not entry or entry["board"] != "machine" or not danger_ok
+                or spec.danger not in ("none", "motion")
+                or entry["confidence"] != "high" or not kind_ok
                 or spec.response != response):
             raise DeviceError(f"Command evidence does not establish the reviewed operation for {code}")
 
@@ -514,4 +535,39 @@ class Session:
         except (DeviceError, OSError, KeyboardInterrupt) as error:
             raise UncertainWrite(
                 f"The outcome of the {name} write is uncertain. Check the touchscreen before trying again."
+            ) from error
+
+    def _cnc_pair(self, enabled: bool) -> tuple[DisplayPreference, Request]:
+        """Validate the reviewed CNC capability for a proposed change."""
+        preference = self._profile.cnc if self._profile else None
+        if preference is None or not preference.writes:
+            raise DeviceError("No reviewed CNC-mode request is available for this firmware")
+        value = "on" if enabled else "off"
+        write = preference.writes[value]
+        self._check(preference.read, command_type="get", response="value")
+        self._check(write, command_type="set", response="ack")
+        return preference, write
+
+    def cnc_state(self) -> str:
+        """Read the current CNC-mode state (M859 with no parameters)."""
+        preference, _ = self._cnc_pair(True)
+        return self._request(preference.read, command_type="get", response="value")
+
+    def set_cnc(self, enabled: bool, expected: str) -> None:
+        """Re-check the expected state, send once, then verify the new state."""
+        preference, write = self._cnc_pair(enabled)
+        current = self._request(preference.read, command_type="get", response="value")
+        if current != expected:
+            raise DeviceError("CNC mode changed since the preview. Run the preview again.")
+        target = "A1" if enabled else "A0"
+        if current == target:
+            return
+        try:
+            self._request(write, command_type="set", response="ack")
+            actual = self._request(preference.read, command_type="get", response="value")
+            if actual != target:
+                raise DeviceError(f"Read-back returned {actual!r}")
+        except (DeviceError, OSError, KeyboardInterrupt) as error:
+            raise UncertainWrite(
+                "The outcome of the CNC-mode write is uncertain. Check the touchscreen before trying again."
             ) from error

@@ -39,6 +39,9 @@ Required per command: `code`, `summary`, `board`, `cmd_type`, `params`, `danger`
 `response`, `evidence`, `confidence`, `verified`, `verified_by`.
 
 - `cmd_type`: `get` | `set` | `action`
+- Optional `readback` (bool): the handler reports its current value when sent
+  without parameters (e.g. bare `M859` reads the CNC state while `M859 A1/A0`
+  sets it). A reviewed getter may then use the bare form at `danger: none`.
 - `danger`: `none` | `motion` | `emission` | `destructive` — **unknown commands default to `emission`**
   until proven otherwise (see Part 2 safety rule).
 - `confidence`: `high` | `medium` | `low` | `unknown`

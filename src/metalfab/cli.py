@@ -226,6 +226,43 @@ def logs(
 
 
 @app.command()
+def cnc(
+    ctx: typer.Context,
+    port: str = typer.Option(..., help="Confirmed device port from 'metalfab ports'."),
+    device_version: str | None = typer.Option(None, help="Exact machine version shown on the touchscreen."),
+    enable: bool = typer.Option(False, "--enable", help="Re-enable CNC/machining mode (M859 A1)."),
+    disable: bool = typer.Option(False, "--disable", help="Disable CNC/machining mode (M859 A0)."),
+    apply: bool = typer.Option(False, "--apply", help="Send the reviewed change after the preview."),
+) -> None:
+    """Read the CNC-mode state or change it with confirmation and read-back.
+
+    Heartbeat episodes silently disable CNC mode; nothing re-enables it
+    automatically, which is why the laser stops firing after a fault. Run this
+    command without --enable/--disable to read the current state.
+    """
+    if enable and disable:
+        raise typer.BadParameter("Choose either --enable or --disable")
+    evidence = _evidence(ctx)
+    try:
+        profile = _profile(evidence, device_version)
+        with live_session(port, evidence, profile=profile, baud=profile.baud if profile else DEFAULT_BAUD) as session:
+            _recording(session)
+            if enable or disable:
+                target = "A1" if enable else "A0"
+                current = session.cnc_state()
+                typer.echo(f"CNC mode is currently {current}.")
+                if not apply:
+                    typer.echo(f"Preview: '--apply' would send M859 {target} and read the state back.")
+                    return
+                session.set_cnc(enable, expected=current)
+                typer.echo(f"CNC mode is now {target}.")
+            else:
+                typer.echo(f"CNC mode is {session.cnc_state()}.")
+    except EXPECTED_ERRORS as error:
+        _fail(error)
+
+
+@app.command()
 def capture(
     ctx: typer.Context,
     port: str = typer.Option(..., help="Confirmed device port from 'metalfab ports'."),

@@ -33,7 +33,7 @@ CONFIRMED = {
     "M863", "M864", "M865", "M866", "M867", "M869",
 }
 
-SEMANTICS: dict[str, dict[str, str]] = {
+SEMANTICS: dict[str, dict] = {
     "M99": {"summary": "Reports app and bootloader versions for all four boards (four lines).", "cmd_type": "get", "danger": "none"},
     "M117": {"summary": "Set 0/1 state via FUN_08026308.", "cmd_type": "set", "danger": "motion"},
     "M222": {"summary": "Service/upgrade mode entry: S1, S2, S6, S7, S8.", "cmd_type": "action", "danger": "destructive"},
@@ -84,7 +84,7 @@ SEMANTICS: dict[str, dict[str, str]] = {
     "M856": {"summary": "Set uint32 at settings+0x188 and apply via FUN_08025c30.", "cmd_type": "set", "danger": "motion"},
     "M857": {"summary": "Read integer at settings+0x1b4.", "cmd_type": "get", "danger": "none"},
     "M858": {"summary": "Get or set byte via FUN_08025ee0.", "cmd_type": "set", "danger": "motion"},
-    "M859": {"summary": "Board key / CNC enable toggle (0/1) with readback; can enable external control.", "cmd_type": "set", "danger": "motion"},
+    "M859": {"summary": "Board key / CNC enable toggle (0/1) with readback; bare M859 reports the current state; can enable external control.", "cmd_type": "set", "danger": "motion", "readback": True},
     "M860": {"summary": "Set byte via FUN_08025f58 and apply.", "cmd_type": "set", "danger": "motion"},
     "M861": {"summary": "Set byte via FUN_0800b38c and apply.", "cmd_type": "set", "danger": "motion"},
     "M862": {"summary": "Set uint16 via FUN_0800b4e8 and apply.", "cmd_type": "set", "danger": "motion"},
@@ -563,6 +563,7 @@ def main() -> None:
             "cmd_type": sem.get("cmd_type", row["kind"]),
             "params": parse_params(row["formats"]),
             "danger": sem.get("danger", "emission") if confirmed else "emission",
+            "readback": bool(sem.get("readback", False)),
             "side_effects": [],
             "response": {"kind": "line-echo", "format": " / ".join(row["formats"])},
             "evidence": {

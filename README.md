@@ -32,6 +32,42 @@ uv run metalfab monitor --port /dev/cu.usbmodemYOURDEVICE
 
 Live status and monitoring listen passively by default. For CLI polling, pass the exact machine board version (`2425`) to `--device-version`. The screen board (`2540`) reports a separate version. The CLI checks the reviewed profile, command evidence digest, and status schema before transmitting a status request. A live capture confirmed the status query on `40.71.003.2425.01.B04`. The command registry records the stock image's SHA-256, and the handoff validator checks it against the bundled image.
 
+### Fault explainer, system log, and job index
+
+```sh
+uv run metalfab faults                     # every known fault, with explanations
+uv run metalfab faults --class 4           # one dispatcher event class only
+uv run metalfab faults event.heartbeat.1.detection_abnormal   # one fault in full detail
+uv run metalfab logs --port /dev/cu.usbmodemYOURDEVICE --device-version 40.71.003.2425.01.B04
+uv run metalfab logs --port /dev/cu.usbmodemYOURDEVICE --device-version 40.71.003.2425.01.B04 --type 1   # ERROR records
+uv run metalfab jobs --port /dev/cu.usbmodemYOURDEVICE --device-version 40.71.003.2425.01.B04
+```
+
+`faults` is the offline explainer: 69 events with curated explanations, the
+machine's own on-screen text, popup-to-page mappings (all 13 popups decoded
+from the firmware's init data), and decompiled raw-status bit polarity. Each
+entry also carries likely causes, operator actions, and what the firmware does
+(see `docs/protocol-notes.md` and `docs/laser-board-analysis.md`).
+
+`logs` reads the machine's 100-record system log ring buffer (M351) and `jobs`
+reads the machining-mode job index (M350). A machine with no jobs yet answers
+`Failed to open index file: -2`; the command surfaces that line instead of a
+bare timeout. When a firmware-version read times out because the laser control
+board is inside one of its silent heartbeat windows, the dashboard reconnects
+and retries once after five seconds.
+
+```sh
+uv run metalfab cnc --port /dev/cu.usbmodemYOURDEVICE --device-version 40.71.003.2425.01.B04
+uv run metalfab cnc --port /dev/cu.usbmodemYOURDEVICE --device-version 40.71.003.2425.01.B04 --enable
+uv run metalfab cnc --port /dev/cu.usbmodemYOURDEVICE --device-version 40.71.003.2425.01.B04 --enable --apply
+```
+
+`cnc` reads the CNC/machining-mode state (bare M859). Heartbeat episodes exit
+CNC mode and nothing re-enables it automatically, which is why the laser stops
+firing after a fault. `--enable`/`--disable` preview the reviewed M859 A1/A0
+change; `--apply` rechecks the current state, sends once, and verifies by
+read-back.
+
 ### Settings and firmware
 
 ```sh
@@ -59,6 +95,16 @@ Disable lasering before adding `--apply` and keep power and USB connected during
 `settings export` uses reviewed getters. `settings set-display` previews changes to `language` and `imperial_units` once their handlers and responses are established. `--apply` rechecks the current value before sending the setter, then reads the value back. There are currently no reviewed getters or setters for these preferences.
 
 Part 1 owns `commands.json`, `faults.json`, `status.json`, and the protocol notes. Record live confirmation in `data/verified-overlay.json` using `verified_by` to identify the capture. Transmission eligibility comes from the reviewed profile in the source code.
+
+## For contributors
+
+The vendor firmware images and the decompiled artifacts (`firmware/` and `re/`)
+are not redistributed in this repository. The committed `data/*.json` and
+`docs/` capture the analysis. The firmware-dependent tests skip when the images
+are absent; the data generators (`tools/build_*.py`, `tools/validate_data.py`)
+report missing inputs or skip the digest check gracefully. To regenerate the
+data from source you need your own copies of the HJ004 images and a Ghidra
+project seeded with `tools/ghidra/Bootstrap.java`.
 
 ## xTool Studio evidence
 

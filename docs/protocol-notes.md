@@ -417,3 +417,58 @@ Cross-checking the same dispatch and screen index exposed several many-to-one an
 
 The welding-head popup can represent a power fault or a communication fault. The serial event
 distinguishes those cases.
+
+### Heartbeat episodes: full cascade and root cause (2026-11-19)
+
+Live captures (20261118T033159Z, 20261118T033200Z, 20261118T070315Z and later)
+plus the machine's own M351 log established the complete episode chain:
+
+1. The laser control module stops answering the machine's 1-second heartbeat
+   (3 dead ticks, about 3-4 s of silence). The monitor prints
+   `The heartbeat packet detection is abnormal!!!` (0x0802572b).
+2. The cascade fires: `Send Wire Communicate Abnormal` (class 6 sub 1, popup 6,
+   page 39), `Stop Swtich Abnormal` (class 1 sub 3, popup 3, page 37), the
+   RGB_LAMP/BUZZER/M806 alarm burst, the wire-feeder disable cascade, and
+   `M850 C0` (laser off). CNC platform communication abnormal (class 7 code 1)
+   calls FUN_080292e4(0) and raises page 72 ("The laser module is restarting.
+   Please do not operate the machine.") via FUN_0802b6e0(1) ->
+   FUN_0802def4(0x48).
+3. Recovery: `The heartbeat packet detection is normal!` (0x0802575c),
+   `Send Wire Communicate Normal`, `Stop Swtich Normal`, `M850 C1` (re-arm),
+   then `AC Touch Normal` at about +3.1 s and `Laser Fault Normal` at about
+   +14.3-15.5 s. Page 72 dismisses after ~100 stable laser-status polls
+   (~20 s) via FUN_0800edc8.
+
+M351 record format confirmed on hardware: `#%03lu [HH:MM:SS.mmm] [LEVEL]
+[CLASS] Param:0x%08X - text`, 100 records, levels INFO/ERROR/WARNING, filter
+A=ERROR B=WARNING C=other. One 108-minute dump logged 14 episodes (gaps 26 s
+to 37 min), each abnormal paired with a stop-switch event 40-50 ms later.
+
+Root-cause conclusions:
+
+- The laser-module link loss is hard-coded to the wire-feeder fault slot
+  (misattribution; FUN_080255a8(1) enqueues class 6 sub 1).
+- The boot burst is an init-order race: the monitor starts unconditionally
+  before the laser link handshake; the first abnormal precedes the first
+  link-live M870 A1 (capture 20261118T033159Z). Each normal transition needs
+  3 consecutive 1 s ticks, so a boot burst spans at least 9 s.
+- Faults write no bit the M808 report reads (the dispatcher writes the
+  settings struct at +0x1a8/+0x1c0; the builder reads the status struct at
+  +0xd2/+0xdc), so the status screen reports Normal throughout an episode.
+- Every episode exits CNC/machining mode via FUN_080292e4(0); nothing
+  re-enables it automatically. Only M859 A1 (0x080205d0) or the touchscreen
+  restores it, which is why the laser will not fire after an episode.
+- No serial command clears the popups; they clear only when the heartbeat
+  recovers (FUN_0802b70a on the normal events) or on reboot.
+- The laser module boots in ~52 s after power-on (first serial answer,
+  capture 20261118T070315Z). A hung module (no watchdog, dead-loop fault
+  handlers; see docs/laser-board-analysis.md) recovers only after a power
+  cycle.
+
+### M350 and M351 verified live (2026-11-19)
+
+M351 pulls the full 100-record ring without an echo; M350 answers
+`Failed to open index file: -2` when no machining jobs exist yet (the index
+file is created lazily). Both recorded in data/verified-overlay.json with
+their capture ids. M350's response carries no command echo and no terminator;
+the block collector treats stream quiescence as its completion signal.
