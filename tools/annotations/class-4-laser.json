@@ -1,0 +1,191 @@
+{
+  "event.laser.0.laser_lock_now": {
+    "severity": "info",
+    "explanation": "The laser's safety lock engaged, so the emission path is blocked. It typically follows an interlock/safety-loop transition or an explicit lock; the machine also self-issues M850 C0/C1 around interlock and stop transitions. No operator action beyond restoring interlocks (doors/lid closed, safety device connected) if emission is needed.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.laser.1.laser_lock_cancel": {
+    "severity": "info",
+    "explanation": "The laser's safety lock was released, so the lock no longer blocks emission. Expected once interlock conditions are restored or the lock is explicitly cancelled. Informational; no operator action.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.laser.4.laser_red_light_en_enable": {
+    "severity": "info",
+    "explanation": "The red guide light enable line turned on, activating the red positioning light. Normally seen while framing or positioning a job. Informational; no operator action.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.laser.5.laser_red_light_en_disable": {
+    "severity": "info",
+    "explanation": "The red guide light enable line turned off, deactivating the red positioning light. Informational; no operator action.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.laser.2.laser_en_enable": {
+    "severity": "info",
+    "explanation": "The laser enable (EN) line turned on, arming the laser for emission. Expected at the start of a job or emission sequence. Informational; keep all interlocks and covers in place whenever EN is active.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.laser.3.laser_en_disable": {
+    "severity": "info",
+    "explanation": "The laser enable (EN) line turned off, disarming emission. Expected at job end or whenever the machine disables the laser, including safety-driven stops. Informational; no operator action.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.laser.6.laser_fault_normal": {
+    "severity": "info",
+    "explanation": "All-clear announcement: the laser fault condition has cleared, and the firmware resets the laser alarm display (FUN_0800bed8(7,0)) and the fault indicator. This string also appears periodically on a healthy machine (observed live), acting as the fault supervisor's normal heartbeat. No operator action needed.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.laser.9.laser_fault_dc_power_abnormal": {
+    "severity": "fault",
+    "explanation": "The laser module reports its DC power supply (driver power) as abnormal. Likely causes: a failing driver power stage, loose power connections inside the module, or a module-internal fault. The firmware only logs this subcode and shows no popup, so watch for the generic 'Error code' alert if the condition persists; check power cabling and power-cycle, and contact after-sales service if it recurs.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.laser.8.laser_fault_dc_power_normal": {
+    "severity": "info",
+    "explanation": "All-clear for the DC power fault: the laser module's DC supply state has returned to normal. The firmware only logs this transition. Informational; no operator action.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.laser.11.laser_fault_ac_power_abnormal": {
+    "severity": "fault",
+    "explanation": "The laser module reports its AC (mains) power supply as abnormal. Likely causes: mains voltage outside the accepted range, a supply-input problem, or an internal power-stage fault. The firmware only logs this subcode and shows no popup; verify the mains supply and the machine's power input if it recurs, and contact after-sales service if it persists.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.laser.10.laser_fault_ac_power_normal": {
+    "severity": "info",
+    "explanation": "All-clear for the AC power fault: the laser module's AC supply state has returned to normal. The firmware only logs this transition. Informational; no operator action.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.laser.13.laser_fault_voltage_overhigh": {
+    "severity": "fault",
+    "explanation": "The laser drive voltage exceeded its upper limit. Likely causes: a driver-regulation failure, a supply fault, or a defect in the laser module. The firmware raises the alarm, sets the laser-fault flag (state +0x1a8 bit 0x200), records fault code 3 at state +0x1c0, turns emission off, and shows the 'Error code' popup; contact after-sales service if it recurs.",
+    "popup": {"id": 5, "page": 40},
+    "screen_text": {"title": "Error code:", "body": "The power supply for the laser module is abnormal. Please contact our after-sales team for solutions."},
+    "bit": null
+  },
+  "event.laser.14.laser_fault_voltage_overlow": {
+    "severity": "fault",
+    "explanation": "The laser drive voltage dropped below its lower limit. Likely causes: a failing driver stage, input supply sag, or poor power connections. The firmware raises the alarm, sets the laser-fault flag (state +0x1a8 bit 0x200), records fault code 4 at state +0x1c0, and shows the 'Error code' popup; recurring occurrences warrant after-sales service.",
+    "popup": {"id": 5, "page": 40},
+    "screen_text": {"title": "Error code:", "body": "The power supply for the laser module is abnormal. Please contact our after-sales team for solutions."},
+    "bit": null
+  },
+  "event.laser.12.laser_fault_voltage_normal": {
+    "severity": "info",
+    "explanation": "All-clear for the voltage fault: drive voltage has returned to within limits. The firmware clears the laser-fault flag (state +0x1a8 bit 0x200), dismisses the alarm display, and releases any pending voltage-fault popups. Informational; no operator action.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.laser.16.laser_fault_current_overhigh": {
+    "severity": "fault",
+    "explanation": "The laser drive current exceeded its upper limit. Likely causes: a driver fault, a short in the diode path, or a module-internal defect. The firmware raises the alarm, sets the laser-fault flag (state +0x1a8 bit 0x100), records fault code 5 at state +0x1c0, turns emission off, and shows the 'Error code' popup; contact after-sales service if it recurs.",
+    "popup": {"id": 5, "page": 40},
+    "screen_text": {"title": "Error code:", "body": "The power supply for the laser module is abnormal. Please contact our after-sales team for solutions."},
+    "bit": null
+  },
+  "event.laser.15.laser_fault_current_normal": {
+    "severity": "info",
+    "explanation": "All-clear for the current fault: drive current has returned to within limits. The firmware clears the laser-fault flag (state +0x1a8 bit 0x100) and the current fault indicator. Informational; no operator action.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.laser.18.laser_fault_temp_overhigh": {
+    "severity": "fault",
+    "explanation": "The laser device temperature status reports high temperature, mirrored by bit 1 of the Device Status (STA) raw word; the machine stops work and shows the 'Machine temperature too high' popup. Likely causes: high ambient temperature, blocked ventilation, or a cooling problem. Let the machine cool down, check airflow and cooling, then resume; recurring overheating warrants service.",
+    "popup": {"id": 12, "page": 58},
+    "screen_text": {"title": "Machine temperature too high", "body": "The machine has stopped working due to high ambient temperature. Please wait for it to cool down before resuming operation."},
+    "bit": {"word": "--- Device Status (STA) ---", "index": 1, "active": 1}
+  },
+  "event.laser.19.laser_fault_temp_overlow": {
+    "severity": "fault",
+    "explanation": "The laser temperature is below its operating range, mirrored by bit 24 of the Device Status (STA) raw word; the machine cannot work and shows the 'Machine temperature too low' popup. Likely cause: ambient temperature at or below the machine's limit. Relocate the machine to an environment above -10 °C before resuming operation.",
+    "popup": {"id": 13, "page": 59},
+    "screen_text": {"title": "Machine temperature too low", "body": "The machine is unable to work due to low temperature. Please relocate it to an environment above -10°C for proper operation."},
+    "bit": {"word": "--- Device Status (STA) ---", "index": 24, "active": 1}
+  },
+  "event.laser.17.laser_fault_temp_normal": {
+    "severity": "info",
+    "explanation": "All-clear for the temperature fault: laser temperature has returned to within limits. The firmware clears the laser-fault flag (state +0x1a8 bit 0x400) and dismisses the temperature popups. Informational; no operator action.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.laser.21.laser_fault_pd_alarm_abnormal": {
+    "severity": "fault",
+    "explanation": "The photodiode (PD) that monitors laser output reported an alarm, meaning the measured output is abnormal. Likely causes: misaligned or dirty optics, photodiode degradation, or genuine power instability. The firmware raises the alarm, records fault code 6 at state +0x1c0, and shows the 'Error code' popup; inspect and clean the optics and contact after-sales service if the alarm persists.",
+    "popup": {"id": 5, "page": 40},
+    "screen_text": {"title": "Error code:", "body": "The power supply for the laser module is abnormal. Please contact our after-sales team for solutions."},
+    "bit": null
+  },
+  "event.laser.20.laser_fault_pd_alarm_normal": {
+    "severity": "info",
+    "explanation": "All-clear for the photodiode (PD) alarm: monitored laser output has returned to normal. The firmware clears the fault flag (state bit 0x200) and the alarm display. Informational; no operator action.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.laser.27.ruike_laser_fault_general_fault_abnormal": {
+    "severity": "fault",
+    "explanation": "The Ruike laser source reports a general (unspecified) fault; the event does not carry the specific cause. The firmware raises the alarm, records fault code 10 at state +0x1c0, and shows the 'Error code' popup. Contact after-sales service; the underlying failure is not exposed over this event.",
+    "popup": {"id": 5, "page": 40},
+    "screen_text": {"title": "Error code:", "body": "The power supply for the laser module is abnormal. Please contact our after-sales team for solutions."},
+    "bit": null
+  },
+  "event.laser.26.ruike_laser_fault_general_fault_normal": {
+    "severity": "info",
+    "explanation": "All-clear for the Ruike general fault: the source's unspecified fault condition has cleared. The firmware clears the fault flag (state bit 0x800) and the alarm display. Informational; no operator action.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.laser.25.ruike_laser_fault_pd_alarm_abnormal": {
+    "severity": "fault",
+    "explanation": "The Ruike laser source reports a scattered-light/photodiode alarm, mirrored by bit 13 ('Scattered Light 1') of the Raycus Status (STR) raw word. Likely causes: stray reflections, optical-path contamination, or a monitor fault. The firmware raises the alarm, records fault code 11 at state +0x1c0, and shows the 'Error code' popup; check optical-path cleanliness and contact after-sales service if the alarm persists.",
+    "popup": {"id": 5, "page": 40},
+    "screen_text": {"title": "Error code:", "body": "The power supply for the laser module is abnormal. Please contact our after-sales team for solutions."},
+    "bit": {"word": "--- Raycus Status (STR) ---", "index": 13, "active": 1}
+  },
+  "event.laser.24.ruike_laser_fault_pd_alarm_normal": {
+    "severity": "info",
+    "explanation": "All-clear for the Ruike PD alarm: the source's scattered-light/photodiode monitor has returned to normal. The firmware clears the fault flag (state bit 0x1000) and the alarm display. Informational; no operator action.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.laser.23.ruike_laser_fault_acdc_fault_abnormal": {
+    "severity": "fault",
+    "explanation": "The Ruike laser source reports an AC/DC power-stage fault, mirrored by bit 0 (ACDC) of the Raycus Status (STR) raw word. Likely causes: a mains/supply problem or an internal power-stage failure. The firmware raises the alarm, records fault code 12 at state +0x1c0, and shows the 'Error code' popup; verify the supply and contact after-sales service if the fault persists.",
+    "popup": {"id": 5, "page": 40},
+    "screen_text": {"title": "Error code:", "body": "The power supply for the laser module is abnormal. Please contact our after-sales team for solutions."},
+    "bit": {"word": "--- Raycus Status (STR) ---", "index": 0, "active": 1}
+  },
+  "event.laser.22.ruike_laser_fault_acdc_fault_normal": {
+    "severity": "info",
+    "explanation": "All-clear for the Ruike ACDC fault: the laser source's AC/DC power stage has returned to normal. The firmware clears the fault flag (state bit 0x2000) and the alarm display. Informational; no operator action.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  }
+}

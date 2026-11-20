@@ -1,0 +1,229 @@
+{
+  "_meta": {
+    "scope": "event classes 0-3 (plus missing class 2)",
+    "existing_ids_annotated": [
+      "event.board_key.0.board_key_normal",
+      "event.board_key.1.board_key_abnormal",
+      "event.board_key.1.usb_sekey_abnormal_exit_cnc_platform",
+      "event.safe_loop.1.safe_loop_normal",
+      "event.safe_loop.0.safe_loop_abnormal",
+      "event.safe_loop.3.stop_swtich_abnormal",
+      "event.safe_loop.2.stop_swtich_normal",
+      "event.safe_loop.4.stop_mode_link",
+      "event.safe_loop.5.stop_mode_alone",
+      "event.mid_relay.0.mid_relay_ka_ab_detect_link",
+      "event.mid_relay.1.mid_relay_ka_ab_detect_alone",
+      "event.mid_relay.2.mid_relay_ctrl_mode_sw_link",
+      "event.mid_relay.3.mid_relay_ctrl_mode_sw_alone",
+      "event.mid_relay.4.mid_relay_safe_sw_rely_link",
+      "event.mid_relay.5.mid_relay_safe_sw_rely_alone",
+      "event.mid_relay.6.ac_touch_normal"
+    ],
+    "created_ids": [
+      "event.voltage.1.motherboard_voltage_abnormal",
+      "event.voltage.3.motherboard_voltage_normal"
+    ],
+    "notes": "Class 2 (voltage) was missing from data/faults.json; created from FUN_0800d1cc (caller_0800D1CC.c): record byte 0 = abnormal subcode 1, byte 1 = normal subcode 3, byte 2 = popup 10 (page 43); abnormal raises popup 10 and sets status bit 0x400, normal clears both. Runtime strings at 0x33058-0x33098: Voltage 24V/5V Normal/Abnormal."
+  },
+  "event.board_key.0.board_key_normal": {
+    "severity": "info",
+    "explanation": "The machine's USB security key check now passes. This clearance announcement follows a Board Key Abnormal event once a valid key is detected, and it closes the on-screen key alert (popup 4). No action is required.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.board_key.1.board_key_abnormal": {
+    "severity": "fault",
+    "explanation": "The machine cannot detect a valid USB security key, so CNC platform operation is blocked and the touchscreen shows the 'Key not inserted' alert. The likely cause is a missing or loose key. Insert the key; if it is already inserted and the alert persists, the key or the USB port may be faulty and needs service.",
+    "popup": {
+      "id": 4,
+      "page": 38
+    },
+    "screen_text": {
+      "title": "Key not inserted",
+      "body": "The key is not inserted. Please insert it."
+    },
+    "bit": null,
+    "causes": [
+      "No valid USB security key detected on the machine's key port.",
+      "Missing, loose, or faulty key; or a damaged key USB port."
+    ],
+    "actions": [
+      "Insert the security key; reseat it if already present.",
+      "If the alert persists with the key inserted, try another key port or have the key/port checked."
+    ],
+    "firmware": [
+      "Dispatcher class 0 sub 1 (target_080271B8.c): FUN_0800bed8(1,3) sets the board-key fault state and FUN_0800c3c8(4) raises popup 4 (page 38).",
+      "When the CNC platform is active (FUN_0800a444() != 0) the same event also prints 'USB Sekey Abnormal Exit CNC_Platform' and exits the platform.",
+      "Sub 0 (normal) clears via FUN_0800bed8(1,0) and dismisses popup 4."
+    ]
+  },
+  "event.board_key.1.usb_sekey_abnormal_exit_cnc_platform": {
+    "severity": "fault",
+    "explanation": "Variant of Board Key Abnormal that fires when the machine is running under the CNC platform (the platform-state check FUN_0800a444 returns nonzero): the machine exits the CNC platform and logs this message over serial. It appears together with the Board Key Abnormal event and shows the same key alert, so treat it the same way: insert a valid key and restart the platform.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.safe_loop.0.safe_loop_abnormal": {
+    "severity": "fault",
+    "explanation": "The safety interlock loop is open, so the machine records an interlock fault (status bit 0x10) and cannot enable the laser. This usually means the safety interlock device (door switch or workpiece clamp connection) is not connected. Connect the interlock device; if it is connected and the event persists, inspect the interlock cable and switch.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null,
+    "causes": [
+      "The safety interlock loop is open: the interlock device (door switch or workpiece clamp connection) is unplugged, or its cable/switch is faulty.",
+      "Live capture 20261118T012308Z-e314ab84 recorded the Normal/Abnormal/Normal sequence during device attachment - brief toggling can come from connector bounce."
+    ],
+    "actions": [
+      "Connect the safety interlock device.",
+      "If connected and still faulting, inspect the interlock cable and switch contacts.",
+      "Laser enable is blocked while this fault is active - do not bypass the loop."
+    ],
+    "firmware": [
+      "Dispatcher class 1 sub 0 (target_080271B8.c): sets the safe-loop flag (settings word +0x1a8, bit 0x10) via FUN_0800bed8(4,3) and records the interlock fault.",
+      "Sub 1 (normal) clears it via FUN_0800bed8(4,0) and clears the flag (AND with 0xffffffef)."
+    ]
+  },
+  "event.safe_loop.1.safe_loop_normal": {
+    "severity": "info",
+    "explanation": "The safety interlock loop has closed, clearing the interlock fault recorded by Safe Loop Abnormal. This typically follows connection of the safety interlock device (the live capture 20261118T012308Z-e314ab84 recorded the Normal/Abnormal/Normal sequence during device attachment). No action is required.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.safe_loop.3.stop_swtich_abnormal": {
+    "severity": "fault",
+    "explanation": "The emergency stop switch is pressed or its circuit is open. The machine stops and the touchscreen shows the 'Emergency stop button pressed' alert. Release the button by rotating it; if the alert persists, check the stop switch wiring.",
+    "popup": {
+      "id": 3,
+      "page": 37
+    },
+    "screen_text": {
+      "title": "Emergency stop button pressed",
+      "body": "The emergency stop button is not released. Please rotate to release it."
+    },
+    "bit": null,
+    "causes": [
+      "The emergency stop button is pressed, or its circuit is open (broken wire, loose contact).",
+      "During heartbeat episodes this event rides along even though the button was never touched: the firmware raises it whenever the stop-switch input is not in its normal state."
+    ],
+    "actions": [
+      "If the button is physically out: rotate it to release.",
+      "If it appears during heartbeat/wire-feeder episodes without anyone touching the button, treat it as a symptom of the underlying link fault, not a separate problem."
+    ],
+    "firmware": [
+      "Dispatcher class 1 sub 3 (target_080271B8.c): raises popup 3 (page 37) and enqueues the laser-off command 'M850 C0' via FUN_0800ec14(s_M850_C0_08027654).",
+      "Sub 2 (normal) enqueues 'M850 C1' (laser re-arm) - the source of the M850 C0/C1 lines seen in captures.",
+      "Clears via FUN_0802b70a(3)."
+    ]
+  },
+  "event.safe_loop.2.stop_swtich_normal": {
+    "severity": "info",
+    "explanation": "The emergency stop switch has been released and the stop condition clears. If the machine's fault-code register still holds a pending error state (0x100), the machine also raises the generic 'Error code:' popup (popup 5). Otherwise this is a routine clearance announcement; no action is required.",
+    "popup": {
+      "id": 5,
+      "page": 40
+    },
+    "screen_text": null,
+    "bit": null
+  },
+  "event.safe_loop.4.stop_mode_link": {
+    "severity": "info",
+    "explanation": "The stop circuit is in linked mode: the stop signal follows the external safety/interlock link, so opening either loop triggers a stop. Informational state announcement; no action is required.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.safe_loop.5.stop_mode_alone": {
+    "severity": "info",
+    "explanation": "The stop circuit is in standalone (alone) mode: the stop switch acts independently of the external link. Informational state announcement; no action is required.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.mid_relay.0.mid_relay_ka_ab_detect_link": {
+    "severity": "info",
+    "explanation": "The machine's relay check reports the KA_AB (A/B safety) relay contacts linked. Informational state announcement logged during relay monitoring; no action is required.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.mid_relay.1.mid_relay_ka_ab_detect_alone": {
+    "severity": "info",
+    "explanation": "The machine's relay check reports the KA_AB (A/B safety) relay contacts alone (not linked). Informational state announcement logged during relay monitoring; no action is required.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.mid_relay.2.mid_relay_ctrl_mode_sw_link": {
+    "severity": "info",
+    "explanation": "The machine's relay check reports the control-mode switch (Ctrl Mode SW) relay contacts linked. Informational state announcement logged during relay monitoring; no action is required.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.mid_relay.3.mid_relay_ctrl_mode_sw_alone": {
+    "severity": "info",
+    "explanation": "The machine's relay check reports the control-mode switch (Ctrl Mode SW) relay contacts alone (not linked). Informational state announcement logged during relay monitoring; no action is required.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.mid_relay.4.mid_relay_safe_sw_rely_link": {
+    "severity": "info",
+    "explanation": "The machine's relay check reports the safe-switch relay (Safe SW Rely) contacts linked. Informational state announcement logged during relay monitoring; no action is required.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.mid_relay.5.mid_relay_safe_sw_rely_alone": {
+    "severity": "info",
+    "explanation": "The machine's relay check reports the safe-switch relay (Safe SW Rely) contacts alone (not linked). Informational state announcement logged during relay monitoring; no action is required.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.mid_relay.6.ac_touch_normal": {
+    "severity": "info",
+    "explanation": "The AC touch (mains safety contact) check passed, and the machine records the touch state as normal. Informational announcement; no action is required.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.voltage.1.motherboard_voltage_abnormal": {
+    "source_string": "Voltage 24V Abnormal",
+    "severity": "fault",
+    "explanation": "The machine measured an out-of-range voltage on a motherboard power rail and shows the 'Abnormal motherboard voltage' alert; the firmware also logs over serial which rail (24V or 5V) is affected. Likely causes are a failing power supply or a wiring problem. Power the machine off and check the supply; if the alert returns after restart, contact after-sales service.",
+    "popup": {
+      "id": 10,
+      "page": 43
+    },
+    "screen_text": {
+      "title": "Abnormal motherboard voltage",
+      "body": "The motherboard voltage is abnormal. Please contact our after-sales team for solutions."
+    },
+    "bit": null,
+    "causes": [
+      "An out-of-range voltage on a motherboard power rail; the serial line names the rail (Voltage 24V or Voltage 5V Abnormal).",
+      "Failing power supply, a wiring/connector problem, or an overloaded rail."
+    ],
+    "actions": [
+      "Power the machine off and check the supply and power connections for the named rail.",
+      "If the alert returns after restart, have the power supply checked."
+    ],
+    "firmware": [
+      "Class 2 is handled outside the main dispatcher: FUN_0800d1cc (caller_0800D1CC.c) raises popup 10 (page 43) on the abnormal record and sets status bit 0x400 via FUN_08026398/FUN_08005150.",
+      "The runtime string comes from the event struct (strings at 0x33058-0x33098: Voltage 24V/5V Normal/Abnormal).",
+      "Sub 3 (normal) clears popup 10 and the status bit."
+    ]
+  },
+  "event.voltage.3.motherboard_voltage_normal": {
+    "source_string": "Voltage 24V Normal",
+    "severity": "info",
+    "explanation": "The motherboard voltage rails (24V and 5V) have returned to their normal range, clearing the voltage fault and closing the 'Abnormal motherboard voltage' popup (popup 10). Clearance announcement; no action is required.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  }
+}

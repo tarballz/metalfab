@@ -1,0 +1,413 @@
+{
+  "version": 1,
+  "trigger": {
+    "command": "M808",
+    "confidence": "high",
+    "evidence": {
+      "offset": "0x0801ef70",
+      "anchor": "M808"
+    }
+  },
+  "report": {
+    "require_complete_report": true,
+    "headers": [
+      "=== Laser Ruike Status Report ===",
+      "--- Device Status (STA) ---",
+      "--- Raycus Status (STR) ---"
+    ],
+    "terminator": "=== End of Status Report ===",
+    "builder": "FUN_0801bb9c",
+    "struct_base": "0x2002085c",
+    "fields": [
+      {
+        "order": 1,
+        "key": "raw_status_device",
+        "label": "Raw Status Value",
+        "type": "hex",
+        "section": "--- Device Status (STA) ---",
+        "struct_offset": "0x50",
+        "values": null,
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 2,
+        "key": "temperature_status",
+        "label": "Temperature Status",
+        "type": "enum",
+        "struct_offset": "0xcf",
+        "values": [
+          "Normal",
+          "High Temperature",
+          "Low Temperature"
+        ],
+        "unit": null,
+        "scaling": null,
+        "notes": "High when +0xcf is set; otherwise Low when +0xda is set; else Normal."
+      },
+      {
+        "order": 3,
+        "key": "laser_status",
+        "label": "Laser Status",
+        "type": "enum",
+        "struct_offset": "0xd0",
+        "values": [
+          "Disabled",
+          "Enabled"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 4,
+        "key": "external_ad",
+        "label": "External AD",
+        "type": "enum",
+        "struct_offset": "0xd1",
+        "values": [
+          "OFF",
+          "ON"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 5,
+        "key": "fault_status",
+        "label": "Fault Status",
+        "type": "enum",
+        "struct_offset": "0xd2",
+        "values": [
+          "Normal",
+          "Fault"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 6,
+        "key": "red_light",
+        "label": "Red Light",
+        "type": "enum",
+        "struct_offset": "0xd3",
+        "values": [
+          "OFF",
+          "ON"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 7,
+        "key": "mod_status",
+        "label": "MOD Status",
+        "type": "enum",
+        "struct_offset": "0xd4",
+        "values": [
+          "OFF",
+          "ON"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 8,
+        "key": "gate_mode",
+        "label": "GATE Mode",
+        "type": "enum",
+        "struct_offset": "0xd5",
+        "values": [
+          "OFF",
+          "ON"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 9,
+        "key": "external_control",
+        "label": "External Control",
+        "type": "enum",
+        "struct_offset": "0xd6",
+        "values": [
+          "OFF",
+          "ON"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 10,
+        "key": "ready_status",
+        "label": "Ready Status",
+        "type": "enum",
+        "struct_offset": "0xd7",
+        "values": [
+          "Not Ready",
+          "Ready"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 11,
+        "key": "laser_emission",
+        "label": "Laser Emission",
+        "type": "enum",
+        "struct_offset": "0xd8",
+        "values": [
+          "OFF",
+          "ON"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 12,
+        "key": "wave_mode",
+        "label": "WAVE Mode",
+        "type": "enum",
+        "struct_offset": "0xd9",
+        "values": [
+          "OFF",
+          "ON"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 13,
+        "key": "red_light_control",
+        "label": "Red Light Control",
+        "type": "enum",
+        "struct_offset": "0xdb",
+        "values": [
+          "Internal Control",
+          "External Control"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 14,
+        "key": "severe_fault",
+        "label": "Severe Fault",
+        "type": "enum",
+        "struct_offset": "0xdc",
+        "values": [
+          "No",
+          "Yes"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 15,
+        "key": "raw_status_raycus",
+        "label": "Raw Status Value",
+        "type": "hex",
+        "section": "--- Raycus Status (STR) ---",
+        "struct_offset": "0x54",
+        "values": null,
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 16,
+        "key": "acdc_status",
+        "label": "ACDC Status",
+        "type": "enum",
+        "struct_offset": "0xde",
+        "values": [
+          "Normal",
+          "Fault"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 17,
+        "key": "driver_1_status",
+        "label": "Driver 1 Status",
+        "type": "enum",
+        "struct_offset": "0xdf",
+        "values": [
+          "Normal",
+          "Fault"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 18,
+        "key": "driver_2_status",
+        "label": "Driver 2 Status",
+        "type": "enum",
+        "struct_offset": "0xe0",
+        "values": [
+          "Normal",
+          "Fault"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 19,
+        "key": "driver_3_status",
+        "label": "Driver 3 Status",
+        "type": "enum",
+        "struct_offset": "0xe1",
+        "values": [
+          "Normal",
+          "Fault"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 20,
+        "key": "driver_4_status",
+        "label": "Driver 4 Status",
+        "type": "enum",
+        "struct_offset": "0xe2",
+        "values": [
+          "Normal",
+          "Fault"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 21,
+        "key": "emission_status",
+        "label": "Emission Status",
+        "type": "enum",
+        "struct_offset": "0xe3",
+        "values": [
+          "Normal",
+          "Fault"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 22,
+        "key": "scattered_light_1",
+        "label": "Scattered Light 1",
+        "type": "enum",
+        "struct_offset": "0xe4",
+        "values": [
+          "Normal",
+          "Fault"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 23,
+        "key": "power_status",
+        "label": "Power Status",
+        "type": "enum",
+        "struct_offset": "0xe5",
+        "values": [
+          "Normal",
+          "Fault"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 24,
+        "key": "interlock_1",
+        "label": "Interlock 1",
+        "type": "enum",
+        "struct_offset": "0xe6",
+        "values": [
+          "Open",
+          "Closed"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 25,
+        "key": "interlock_2",
+        "label": "Interlock 2",
+        "type": "enum",
+        "struct_offset": "0xe7",
+        "values": [
+          "Open",
+          "Closed"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 26,
+        "key": "interlock_error",
+        "label": "Interlock Error",
+        "type": "enum",
+        "struct_offset": "0xe8",
+        "values": [
+          "Normal",
+          "Error"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 27,
+        "key": "raycus_ready",
+        "label": "Raycus Ready",
+        "type": "enum",
+        "struct_offset": "0xe9",
+        "values": [
+          "Not Ready",
+          "Ready"
+        ],
+        "unit": null,
+        "scaling": null
+      },
+      {
+        "order": 28,
+        "key": "laser_lock",
+        "label": "Laser Lock",
+        "type": "enum",
+        "struct_offset": "0xea",
+        "values": [
+          "Unlocked",
+          "Locked"
+        ],
+        "unit": null,
+        "scaling": null
+      }
+    ],
+    "raw_status": {
+      "label": "Raw Status Value",
+      "format": "0x%08X",
+      "note": "Two words in the status struct: Device at +0x50, Raycus at +0x54. Bits are scoped to their owning section; polarity (active=1) comes from the decompiled parsers FUN_08021920 (STA) and FUN_08021a24 (STR) - see docs/protocol-notes.md section 6.",
+      "bits": [
+        {
+          "index": 1,
+          "fault_id": "event.laser.18.laser_fault_temp_overhigh",
+          "section": "--- Device Status (STA) ---"
+        },
+        {
+          "index": 24,
+          "fault_id": "event.laser.19.laser_fault_temp_overlow",
+          "section": "--- Device Status (STA) ---"
+        },
+        {
+          "index": 0,
+          "fault_id": "event.laser.23.ruike_laser_fault_acdc_fault_abnormal",
+          "section": "--- Raycus Status (STR) ---"
+        },
+        {
+          "index": 13,
+          "fault_id": "event.laser.25.ruike_laser_fault_pd_alarm_abnormal",
+          "section": "--- Raycus Status (STR) ---"
+        }
+      ]
+    }
+  }
+}

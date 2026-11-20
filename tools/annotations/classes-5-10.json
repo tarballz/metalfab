@@ -1,0 +1,229 @@
+{
+  "event.weld_gun.0.weld_gun_power_normal": {
+    "severity": "info",
+    "explanation": "The welding head's power rail is reporting normal again after a previous Weld_gun Power Abnormal. The firmware logs the clearance, clears the fault state, and dismisses popup 9. No operator action is needed.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.weld_gun.1.weld_gun_power_abnormal": {
+    "severity": "fault",
+    "explanation": "The machine board detected a power-supply problem on the welding-head link. The firmware raises popup 9, whose page text says the welding head stops working due to communication exceptions; the same popup is shared with the communication fault, so the serial line 'Weld_gun Power Abnormal' is what distinguishes a power fault from a comm fault. Check the welding-head power connection and wiring, then power-cycle; contact after-sales if it repeats.",
+    "popup": {"id": 9, "page": 42},
+    "screen_text": {
+      "title": "Welding head communication exceptions",
+      "body": "The welding head stops working due to communication exceptions. Please contact our after-sales team for solutions."
+    },
+    "bit": null
+  },
+  "event.weld_gun.2.weld_gun_mirror_temp_normal": {
+    "severity": "info",
+    "explanation": "The lens-protector (protective mirror) temperature in the welding head has returned to the normal range. The firmware logs the clearance, clears the mirror-temp flag (settings word +0x1a8, bit 0x40) and dismisses popup 8. No operator action is needed.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.weld_gun.3.weld_gun_mirror_temp_abnormal": {
+    "severity": "fault",
+    "explanation": "The lens protector in the welding head reports an out-of-range temperature. The firmware raises popup 8 and sets the mirror-temp flag (settings word +0x1a8, bit 0x40). Likely causes are a dirty or worn lens protector, a cooling problem, or a faulty sensor. Check whether the lens protector needs to be replaced, as the on-screen guidance says.",
+    "popup": {"id": 8, "page": 41},
+    "screen_text": {
+      "title": "Lens protector temperature exceptions",
+      "body": "The temperature of the lens protector in the welding head is abnormal. Please check whether the lens protector needs to be replaced."
+    },
+    "bit": null
+  },
+  "event.weld_gun.4.weld_gun_communication_normal": {
+    "severity": "info",
+    "explanation": "The serial link to the welding head answered again after a communication fault (observed live as 'Weld_gun Communication Normal'). The firmware logs the clearance, clears the alarm flag set by the abnormal event, and dismisses popup 9. No operator action is needed.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.weld_gun.5.weld_gun_communication_abnormal": {
+    "severity": "fault",
+    "explanation": "The machine board stopped receiving responses from the welding head over the head link. The firmware raises popup 9, the same popup used for Weld_gun Power Abnormal, so the serial string is what distinguishes the two cases. Likely causes are a loose or damaged head cable or connector, or an unresponsive head controller. Power-cycle the machine and reseat the head cable; contact the after-sales team if it persists.",
+    "popup": {"id": 9, "page": 42},
+    "screen_text": {
+      "title": "Welding head communication exceptions",
+      "body": "The welding head stops working due to communication exceptions. Please contact our after-sales team for solutions."
+    },
+    "bit": null
+  },
+  "event.send_wire.0.send_wire_communicate_normal": {
+    "severity": "info",
+    "explanation": "The wire-feeding module's serial link answered again. The firmware logs 'Send Wire Communicate Normal', clears the fault state, dismisses popup 6, and re-enables the wire feeder. No operator action is needed; it clears the previous anomaly alert.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.send_wire.1.send_wire_communicate_abnormal": {
+    "severity": "fault",
+    "explanation": "The wire-feeding module stopped answering the machine board. The firmware raises popup 6, prints 'Send Wire Communicate Abnormal', and runs the wire-feeder disable cascade. In the live capture this same cascade fired on every heartbeat-monitor episode ('The heartbeat packet detection is abnormal!!!'), so a silent laser-module link can present as this fault. Check the wire-feeder power and connection, and the laser-module link harness if heartbeat messages accompany it; contact after-sales if it recurs.",
+    "popup": {"id": 6, "page": 39},
+    "screen_text": {
+      "title": "Wire feeding module anomaly detected",
+      "body": "Wire feeding module anomaly detected, unable to continue. Please contact our after-sales team."
+    },
+    "bit": null,
+    "causes": [
+      "The wire-feeder module stopped responding on its serial link, or its link never came up.",
+      "Misattribution confirmed in firmware: a loss on the LASER-MODULE link (heartbeat monitor) is hard-coded to this same fault slot, so check whether 'The heartbeat packet detection is abnormal!!!' appears just before this line - if it does, the real problem is the laser-module link, not the feeder.",
+      "Loose connector, damaged harness, or an unresponsive feeder controller."
+    ],
+    "actions": [
+      "Check whether a heartbeat-abnormal line precedes this event; if so, treat the laser-module link as the prime suspect and reseat its connector first.",
+      "Reseat the wire-feeder connector and inspect the feeder harness and grounding.",
+      "Power-cycle the machine; if the fault recurs with no heartbeat line, the feeder module or its cable needs service."
+    ],
+    "firmware": [
+      "Dispatcher class 6 sub 1 (target_080271B8.c): FUN_0800bed8(10,3) sets the feeder fault state, FUN_0800c3c8(6) raises popup 6 (page 39), then the disable cascade FUN_0800ceb8(0)/FUN_080266f4(0)/FUN_08026608(0)/FUN_080265c4(0) shuts the feeder down.",
+      "Recovery (class 6 sub 0) clears the state via FUN_0800bed8(10,0) and dismisses popup 6 via FUN_0802b70a(6).",
+      "The firmware prints nothing else about the cause; the heartbeat monitor (FUN_080255dc -> FUN_080255a8(1)) is the only upstream that raises this event."
+    ]
+  },
+  "event.cnc_platform.0.cnc_platform_communication_normal": {
+    "severity": "info",
+    "explanation": "The CNC platform controller is answering again. The firmware logs the event and sends 'M859 A1' to re-enable the CNC platform. No operator action is needed; platform motion becomes usable again.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.cnc_platform.1.cnc_platform_communication_abnormal": {
+    "severity": "fault",
+    "explanation": "The machine board lost contact with the CNC platform controller. The firmware logs the event and disables the CNC platform until communication returns; this dispatcher branch raises no popup. Check the CNC-platform link cable and power-cycle the machine; platform motion is unavailable while the fault persists.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null,
+    "causes": [
+      "The CNC-platform (laser control platform) link stopped responding - in the observed episodes this is the laser module's own restart.",
+      "Same root cause family as the heartbeat events: the laser module board rebooting or a marginal link contact."
+    ],
+    "actions": [
+      "If 'The heartbeat packet detection is abnormal!!!' appears just before, treat the laser-module link as the root cause (reseat its connector, inspect the harness).",
+      "Wait for the restart notice to clear (~20 s of stable laser status); if it recurs often, check the link hardware."
+    ],
+    "firmware": [
+      "Dispatcher class 7 code 1 (target_080271B8.c line 440): FUN_080292e4(0) exits CNC mode (forces laser power to 0x32/50, duty, toggles laser-gate functions), then FUN_0802b6e0(1) raises page 72 'The laser module is restarting. Please do not operate the machine.' via FUN_0802def4(0x48).",
+      "Page 72 is outside the popup mechanism (popups only cover pages 35-45/58-59) - it is raised directly and also from the stop-switch-normal path (class 1 code 2) when the restart conditions clear.",
+      "Dismissal: FUN_0800edc8 polls the laser-status transition every >=200 ms and, after 100 consecutive stable polls (~20 s), calls FUN_0802b6e0(0) to dequeue the page and clears the restart flag via FUN_080268d4(0)."
+    ]
+  },
+  "event.lcd_screen.0.lcd_screen_idle_now": {
+    "severity": "info",
+    "explanation": "The screen controller reports it is idle. The firmware resets the screen-work flags and several display and state outputs. Informational; no operator action is needed.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.lcd_screen.1.lcd_screen_work_now": {
+    "severity": "info",
+    "explanation": "The screen controller reports it is actively working. The firmware raises popup 11, the 'Laser enabled' notice, which warns that the welding head can emit laser and to wear a mask or safety glasses. Informational; no operator action beyond the safety reminder.",
+    "popup": {"id": 11, "page": 45},
+    "screen_text": {
+      "title": "Laser enabled",
+      "body": "Laser has been enabled and the welding head can emit laser. Please wear a mask or a pair of safety glasses."
+    },
+    "bit": null
+  },
+  "event.lcd_screen.2.lcd_screen_error_now": {
+    "severity": "fault",
+    "explanation": "The screen controller reported an error state. The firmware clears the screen-work flags and disables the wire feeder and related outputs with the same disable calls used by the wire-feeder communication fault, so a screen fault also stops wire feeding. This branch raises no popup id. Check the screen connection and restart the machine; contact after-sales if the fault repeats.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.gas_relay.0.gas_relay_normal": {
+    "severity": "info",
+    "explanation": "The shielding-gas pressure has returned to the configured range. The firmware clears the gas flag (settings word +0x1a8, bit 0x80) and dismisses both gas popups (1 and 2). No operator action is needed.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.gas_relay.1.gas_relay_min_error": {
+    "severity": "warning",
+    "explanation": "The shielding-gas pressure at the weld head fell below the configured minimum. The firmware raises popup 1 and sets the gas flag (settings word +0x1a8, bit 0x80). This is a pressure deviation warning rather than an immediate hazard. Check the gas supply, regulator, and hose, as the on-screen guidance says.",
+    "popup": {"id": 1, "page": 35},
+    "screen_text": {
+      "title": "Gas pressure too low",
+      "body": "It is detected that the gas pressure to the weld head is too low. Please check the gas pressure."
+    },
+    "bit": null
+  },
+  "event.gas_relay.2.gas_relay_max_error": {
+    "severity": "warning",
+    "explanation": "The shielding-gas pressure at the weld head rose above the configured maximum. The firmware raises popup 2 and sets the gas flag (settings word +0x1a8, bit 0x80). This is a pressure deviation warning rather than an immediate hazard. Check the regulator setting and the gas supply, as the on-screen guidance says.",
+    "popup": {"id": 2, "page": 36},
+    "screen_text": {
+      "title": "Gas pressure too high",
+      "body": "It is detected that the gas pressure to the weld head is too high. Please check the gas pressure."
+    },
+    "bit": null
+  },
+  "event.mcode_test.0.mcode_test_lock_pin": {
+    "severity": "info",
+    "explanation": "Factory-test diagnostic: the MCODE test Lock pin state was logged. The dispatcher records the event at normal (info) severity only; no popup, fault state, or alarm is raised. Informational, occurs in factory test mode.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.mcode_test.1.mcode_test_en_pin": {
+    "severity": "info",
+    "explanation": "Factory-test diagnostic: the MCODE test En pin state was logged. The dispatcher records the event at normal (info) severity only; no popup, fault state, or alarm is raised. Informational, occurs in factory test mode.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.mcode_test.2.mcode_test_dac_pin": {
+    "severity": "info",
+    "explanation": "Factory-test diagnostic: the MCODE test DAC pin state was logged. The dispatcher records the event at normal (info) severity only; no popup, fault state, or alarm is raised. Informational, occurs in factory test mode.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.mcode_test.3.mcode_test_pwm_pin": {
+    "severity": "info",
+    "explanation": "Factory-test diagnostic: the MCODE test PWM pin state was logged. The dispatcher records the event at normal (info) severity only; no popup, fault state, or alarm is raised. Informational, occurs in factory test mode.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  },
+  "event.heartbeat.1.detection_abnormal": {
+    "severity": "fault",
+    "source_string": "The heartbeat packet detection is abnormal!!!",
+    "explanation": "The machine's 1-second monitor saw ~3 ticks without a fresh answer from the laser-module link. The firmware then trips the wire-feeder comm fault, the stop-switch popup, the alarm lamp and buzzer, and disables the wire feeder while shutting the laser (M850 C0) - all confirmed in the live capture. The likely cause is the laser module's own watchdog reboot. Operator action: note the frequency; if it repeats often, check the laser-module link and harness. No popup id is attached to this event.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null,
+    "causes": [
+      "At boot: a confirmed firmware init-order race - the monitor starts unconditionally (startup 0x080101B0 -> init-array runner -> OS loop -> hardcoded task chain) before the laser link handshake completes, so the first 'abnormal' fires before the first link-live 'M870 A1' (proven in capture 20261118T033159Z).",
+      "After boot: the laser control module stopped answering the 1-second heartbeat for ~3 ticks (3-4 s of silence) - its own watchdog reboot or a marginal link contact.",
+      "The laser board's own comms cycle at power-on (each normal transition needs 3 consecutive 1 s ticks, so a boot burst spans >=9 s, not sub-second).",
+      "Runtime episodes occur at full idle with the laser never enabled, so load and temperature are ruled out by the captured evidence."
+    ],
+    "actions": [
+      "At boot: expect a short burst of abnormal/normal cycles - that is the firmware init race, not a hardware fault; do not chase the connector for boot-time bursts.",
+      "After boot: note the frequency; isolated events are expected during the laser module's own reboots, but recurring episodes point to a marginal link contact.",
+      "Reseat the wire-feeder and laser-module connectors and inspect the harness for strain or damage if runtime episodes recur.",
+      "If episodes recur, capture a session and compare episode intervals - irregular gaps point to a physical contact, fixed periods to a firmware timer."
+    ],
+    "firmware": [
+      "Monitor FUN_080255dc polls the link counter at RAM 0x20000218 every 1 s and trips after 3 dead ticks (caller_080255DC.c).",
+      "The cascade hard-codes the laser-link loss to the wire-feeder fault slot: FUN_080255a8(1) enqueues event class 6 sub 1, raising popup 6 and disabling the wire feeder.",
+      "Class 1 sub 3 (stop switch abnormal) rides along and enqueues 'M850 C0' (laser off) via FUN_0800ec14; recovery enqueues 'M850 C1' (re-arm).",
+      "Downstream echoes are deterministic: 'AC Touch Normal' ~3.1 s and 'Laser Fault Normal' ~14.3-15.5 s after recovery.",
+      "Laser-board side (re/laser/ decompile): the M99 responder runs in the cooperative main loop, so any stall starves it for exactly this 3-4 s window; the app never starts or feeds a watchdog, fault handlers hang rather than reset, and there is no reset-cause handling, so app-crash/watchdog reboots are ruled out.",
+      "Laser-board latent defect: two flash dispatch-table pointers are misaligned by 4 bytes (FUN_080025C4 -> 0x08009B84 vs table at 0x08009B88; FUN_08006318 -> 0x08009BAC vs 0x08009BA8), so a stray F0 frame of type 0x20 could spuriously trigger its reset command (id 0x11) or a hang.",
+      "The touchscreen's restart notice (page 72 'The laser module is restarting...') is raised by the class-7 CNC-platform-comm event and the stop-switch-normal path via FUN_0802b6e0(1) -> FUN_0802def4(0x48); it is dismissed after ~100 stable laser-status polls (~20 s) via FUN_0800edc8.",
+      "No M808 field reflects this fault: the report reads the status struct (+0xd2/+0xdc) while the dispatcher writes the settings struct (+0x1a8/+0x1c0), and class 6 writes no bit anywhere."
+    ]
+  },
+  "event.heartbeat.0.detection_normal": {
+    "severity": "info",
+    "source_string": "The heartbeat packet detection is normal!",
+    "explanation": "The monitored laser-module link answered again. The firmware reverses the cascade: the wire-feeder comm fault and stop-switch fault clear, the wire feeder is re-enabled, and the laser is re-armed (M850 C1), as seen in the live capture. No operator action is needed.",
+    "popup": null,
+    "screen_text": null,
+    "bit": null
+  }
+}

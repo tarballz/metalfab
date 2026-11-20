@@ -1,0 +1,26 @@
+# Second focus pass: remaining handlers, dispatch sites, diagnostics
+0801f0a4  # M812
+0801f0fc  # M814
+0801f190  # NTC Error!!!
+0801f4e0  # LASER IS ERROR!!!! Dangerous!!!!
+0800cf54  # Laser Fault Abnormal
+0800ec14  # text sender used by M850 handlers
+0801b74c  # response/echo helper
+080205d0  # M859
+080207f4  # M866
+08020848  # M867
+08020ae6  # call site -> M99 (dispatch region)
+08020bc4  # call site -> M800 cluster (dispatch region)
+08020eee  # call site -> M869 (dispatch region)
+08006c7e  # call site -> event dispatcher
+08022be8  # M812 (duplicate cluster)
+08023080  # M814 (duplicate cluster)
+08022dc0  # M800 (duplicate cluster)
+08022e54  # M801 (duplicate cluster)
+08022f14  # M802 (duplicate cluster)
+08023c5c  # M800 (third cluster)
+08023ca8  # M801 (third cluster)
+08023d4c  # M802 (third cluster)
+08026a78  # M800 (fourth cluster)
+08026a9c  # M801 (fourth cluster)
+080269f0  # M802 helper (fourth cluster)

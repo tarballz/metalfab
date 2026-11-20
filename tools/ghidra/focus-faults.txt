@@ -1,0 +1,25 @@
+# Fault-explainer batch: raw-status polarity, fault-state accumulation, popups,
+# log-type names, class-2 producers, USB echo path, probe candidates, and the
+# scatter-load decompressor needed to re-derive the popup table.
+08021920  # STA raw-status parser (FUN_08021b30 case 0x22) - bit polarity
+08021a24  # STR raw-status parser (case 0x23) - bit polarity
+0800bed8  # fault-state index setter used by the dispatcher
+08026398  # fault-accumulation bit writes
+0800c3c8  # popup raise
+0802b70a  # popup clear
+0802b6e0  # popup/screen side effect (CNC class 7)
+080098d0  # M351 log-type name
+08009fd8  # M351 log-type name
+080271b8  # event dispatcher (pull all callers, incl. class-2 producers)
+0800d1cc  # class-2 popup raiser (callers + string table)
+0801b74c  # response/echo helper (callers show M350/M351 echo semantics)
+0801ea1c  # M118 handler
+0801ea3e  # M157 handler
+0801ef8c  # M809 handler
+08020544  # M857 handler (no-arg response shape)
+08012c88  # scatter-load decompressor for the 0x2000c620 init-data region
+08011650  # caller of the decompressor (startup init path)
+08010d10  # caller of the decompressor
+08010e10  # caller of the decompressor
+08044364  # scatter-load descriptor/copy routine candidate
+08046cf4  # scatter-load descriptor/copy routine candidate

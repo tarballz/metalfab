@@ -1,0 +1,18 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+dist/
+
+# Vendor firmware and decompiled artifacts (proprietary; obtain your own copies)
+firmware/
+re/
+
+# Local state
+.remember/
+.nodeterm/
+.DS_Store
+
+# Recordings
+*.jsonl

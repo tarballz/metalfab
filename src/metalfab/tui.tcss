@@ -1,0 +1,210 @@
+Screen {
+    background: #101720;
+    color: #e2ebf3;
+}
+
+Header, Footer {
+    background: #1b2734;
+}
+
+HeaderTitle {
+    text-style: bold;
+}
+
+HeaderIcon {
+    display: none;
+}
+
+#connection-bar {
+    height: auto;
+    padding: 0 2;
+    background: #15232c;
+}
+
+#connection-status {
+    height: auto;
+    color: #8ee3db;
+    text-style: bold;
+}
+
+#recording-status, .notice, #replay-position {
+    height: auto;
+    color: #a7bdcf;
+}
+
+.notice.error {
+    color: #ffb284;
+    text-style: bold;
+}
+
+TabbedContent {
+    height: 1fr;
+}
+
+ContentSwitcher, TabPane {
+    height: 1fr;
+}
+
+TabPane {
+    padding: 0 1;
+}
+
+Tab {
+    padding: 0 1;
+}
+
+Tab.-active {
+    color: #8ee3db;
+    text-style: bold;
+}
+
+.pane-scroll {
+    height: 1fr;
+    padding: 0 1 1 0;
+}
+
+.form-row {
+    height: 2;
+    align-vertical: middle;
+}
+
+.form-row Input, .form-row Select {
+    width: 1fr;
+    margin-right: 1;
+}
+
+.form-row Button {
+    height: 1;
+    border: none;
+    width: auto;
+    min-width: 8;
+    margin-right: 1;
+    padding: 0 1;
+}
+
+Button.-primary {
+    background: #276e70;
+    color: #efffff;
+}
+
+.offline .live-only {
+    display: none;
+}
+
+.section-title {
+    color: #8ee3db;
+    text-style: bold;
+    height: auto;
+}
+
+.next-section {
+    margin-top: 1;
+}
+
+.panel {
+    background: #17222d;
+    padding: 0 1;
+    height: auto;
+    margin-top: 1;
+}
+
+#overview-panels {
+    layout: vertical;
+    height: auto;
+}
+
+#status-panel, #activity-panel, #live-report, #replay-report {
+    width: 100%;
+    height: auto;
+}
+
+.wide #overview-panels {
+    layout: horizontal;
+}
+
+.wide #status-panel {
+    width: 3fr;
+    margin-right: 1;
+}
+
+.wide #activity-panel {
+    width: 2fr;
+}
+
+#latest-fault {
+    color: #f3c58f;
+}
+
+#duration {
+    width: 6;
+    margin-right: 0;
+}
+
+#duration-unit {
+    width: 4;
+    height: 1;
+    color: #a7bdcf;
+}
+
+EventBrowser {
+    height: 1fr;
+}
+
+.event-filter {
+    height: 1;
+    width: 24;
+    margin: 0 0 1 0;
+}
+
+EventBrowser DataTable {
+    height: 1fr;
+    background: #17222d;
+}
+
+.event-detail-scroll {
+    height: 5;
+    padding: 0 1;
+    margin-top: 1;
+    background: #17222d;
+}
+
+.event-detail {
+    height: auto;
+}
+
+#replay-events {
+    height: 17;
+}
+
+#replay-output {
+    display: none;
+    height: auto;
+}
+
+#replay-output.loaded {
+    display: block;
+}
+
+#replay-position {
+    width: auto;
+    margin-right: 1;
+}
+
+Collapsible {
+    padding: 0;
+    margin: 1 0 0 0;
+}
+
+ConfirmDisplay {
+    align: center middle;
+    background: #101720 75%;
+}
+
+#display-confirmation {
+    width: 50;
+    max-width: 100%;
+    height: auto;
+    padding: 1 2;
+    background: #1b2734;
+    border: tall #8ee3db;
+}

@@ -1,0 +1,3553 @@
+{
+  "version": 1,
+  "source": {
+    "board": "machine",
+    "image": "800W_Machine_APP_V40.71.003.2425.01.B04.bin",
+    "sha256": "5f312f8cdae9f75f33cb791e277320eed6879ab324c767e85bd123c049c6d65e"
+  },
+  "commands": [
+    {
+      "code": "M99",
+      "summary": "Reports app and bootloader versions for all four boards (four lines).",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M99 A%s.%s B%s\n"
+      },
+      "evidence": {
+        "offset": "080208F8",
+        "anchor": "M99 A%s.%s B%s"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M100",
+      "summary": "Sensor float readout via FUN_0800acfc/FUN_08000c8c.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "float",
+          "precision": 1,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M100 A%.1f\n"
+      },
+      "evidence": {
+        "offset": "0801DAF8",
+        "anchor": "M100 A%.1f"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M105",
+      "summary": "Display-oriented multi-field command with string parameters.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "D",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "E",
+          "type": "float",
+          "precision": 5,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "G",
+          "type": "float",
+          "precision": 1,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "H",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "I",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "J",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M105 A\"%s\" C\"%s\" D%d E%.5f F\"%s\" G%.1f H%d I%d J%d\n"
+      },
+      "evidence": {
+        "offset": "0801E104",
+        "anchor": "M105 A\"%s\" C\"%s\" D%d E%.5f F\"%s\" G%.1f H%d I%d J%d"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M106",
+      "summary": "Eight byte channels plus S flag via FUN_08007640.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "D",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "E",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "F",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "G",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "H",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "S",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M106 A%d B%d C%d D%d E%d F%d G%d H%d S%d\n"
+      },
+      "evidence": {
+        "offset": "0801E104",
+        "anchor": "M106 A%d B%d C%d D%d E%d F%d G%d H%d S%d"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M107",
+      "summary": "Undocumented; echoes 'M107 %s A%d B%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M107 %s A%d B%d\n"
+      },
+      "evidence": {
+        "offset": "0801E3D0",
+        "anchor": "M107 (USB path answers 'command error'; M107 %s A%d B%d lives on a sub-board)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M108",
+      "summary": "Undocumented; echoes 'M108 P%c%d A%d B%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M108 P%c%d A%d B%d\n"
+      },
+      "evidence": {
+        "offset": "0801E530",
+        "anchor": "M108 (USB path answers 'command error'; P%c%d A%d B%d form exists)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M109",
+      "summary": "Undocumented; echoes 'M109\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M109\n"
+      },
+      "evidence": {
+        "offset": "08020A18",
+        "anchor": "M109 (TBB@0x08020a18 entry 10; shared unresolved target with M110)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M110",
+      "summary": "Undocumented; echoes 'M110\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M110\n"
+      },
+      "evidence": {
+        "offset": "08020A18",
+        "anchor": "M110 (TBB@0x08020a18 entry 11; shared unresolved target with M109)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M112",
+      "summary": "Read 24-bit value via FUN_0802702c.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M112 0x%06X\n"
+      },
+      "evidence": {
+        "offset": "0801E728",
+        "anchor": "M112 0x%06X"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M113",
+      "summary": "Screen/language cycle navigator; changes touchscreen state.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M113 A%d B%d C%d\n"
+      },
+      "evidence": {
+        "offset": "0801E750",
+        "anchor": "M113 (screen/language cycle navigator; A/B/C params)"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M114",
+      "summary": "Boolean flag via FUN_08026380 with readback echo.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M114 A%d\n"
+      },
+      "evidence": {
+        "offset": "0801E8FC",
+        "anchor": "M114 A%d"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M117",
+      "summary": "Set 0/1 state via FUN_08026308.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M117 A%d\\n"
+      },
+      "evidence": {
+        "offset": "0801E9C0",
+        "anchor": "M117 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M118",
+      "summary": "Zero settings 0x43/0x44 and apply via FUN_0801613c(10).",
+      "board": "machine",
+      "cmd_type": "action",
+      "params": [],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M118\n"
+      },
+      "evidence": {
+        "offset": "0801EA1C",
+        "anchor": "M118 (zeroes settings 0x43/0x44 and applies via FUN_0801613c(10))"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M157",
+      "summary": "Write uint16 at settings 0x9d, clear 0x9c, apply.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M157 A%d\n"
+      },
+      "evidence": {
+        "offset": "0801EA3E",
+        "anchor": "M157 A%d"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M222",
+      "summary": "Service/upgrade mode entry: S1, S2, S6, S7, S8.",
+      "board": "machine",
+      "cmd_type": "action",
+      "params": [],
+      "danger": "destructive",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M222 S2\\n / M222 S6\\n / M222 S7\\n / M222 S8\\n / M222 S1\\n"
+      },
+      "evidence": {
+        "offset": "0801EA80",
+        "anchor": "M222 S2\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M350",
+      "summary": "Dump the machining-mode job index file (Index file content plus folder listings).",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "Index file content: %s\n"
+      },
+      "evidence": {
+        "offset": "0801EB7C",
+        "anchor": "M350 (dispatch case 0x15e; job index dump, no echo prefix): Index file content: %s"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M351",
+      "summary": "Dump the 100-record system log ring buffer; A/B/C filters by SYSTEM/ERROR/WARNING.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "=== System Log Records (Total: %lu) ===\n"
+      },
+      "evidence": {
+        "offset": "0801EB88",
+        "anchor": "M351 (dispatch case 0x15f; log ring dump, optional A/B/C filter): === System Log Records (Total: %lu) ==="
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M800",
+      "summary": "Set integer setting, clamped to configured min/max.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M800 A%d\\n / M800\\n"
+      },
+      "evidence": {
+        "offset": "0801EBE4",
+        "anchor": "M800 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M801",
+      "summary": "Set float setting, clamped, stored with scaled copy.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "float",
+          "precision": 5,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M801 A%.5f\\n / M801\\n"
+      },
+      "evidence": {
+        "offset": "0801EBE4",
+        "anchor": "M801 A%.5f\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M802",
+      "summary": "Set float setting, clamped, stored with scaled copy.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "float",
+          "precision": 5,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M802 A%.5f\\n / M802\\n"
+      },
+      "evidence": {
+        "offset": "0801EBE4",
+        "anchor": "M802 A%.5f\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M804",
+      "summary": "Read integer value from settings struct (+0x1ac).",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M804 A%d\\n"
+      },
+      "evidence": {
+        "offset": "0801EBE4",
+        "anchor": "M804 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M805",
+      "summary": "Read six values from the settings struct.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "D",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "E",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "F",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M805 A%d B%d C%d D%d E%d F%d\\n"
+      },
+      "evidence": {
+        "offset": "0801EBE4",
+        "anchor": "M805 A%d B%d C%d D%d E%d F%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M806",
+      "summary": "Echo-only handler; returns the received command buffer.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M806\n"
+      },
+      "evidence": {
+        "offset": "0801EBE4",
+        "anchor": "M806 (dispatch case 0x326; no literal format string)"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M807",
+      "summary": "Set boolean flag, then report current value; effect not established.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M807 A%d\\n"
+      },
+      "evidence": {
+        "offset": "0801EF20",
+        "anchor": "M807 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M808",
+      "summary": "Full status report: Device (STA) and Raycus (STR) sections.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M808\\n"
+      },
+      "evidence": {
+        "offset": "0801EF70",
+        "anchor": "M808\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M809",
+      "summary": "Quoted string forwarded to sub-board channel 3 via FUN_0801aec0.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M809 \"%s\"\n"
+      },
+      "evidence": {
+        "offset": "0801EF8C",
+        "anchor": "M809 (quoted string forwarded to sub-board channel 3 via FUN_0801aec0)"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M810",
+      "summary": "Read state value via FUN_080060b4.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M810 A%d\\n"
+      },
+      "evidence": {
+        "offset": "0801F028",
+        "anchor": "M810 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M811",
+      "summary": "Read five status values via state getters.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "D",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "E",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M811 A%d B%d C%d D%d E%d\\n"
+      },
+      "evidence": {
+        "offset": "0801F04C",
+        "anchor": "M811 A%d B%d C%d D%d E%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M812",
+      "summary": "Read a single state value via FUN_0800b3f4.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M812 A%d\\n"
+      },
+      "evidence": {
+        "offset": "0801F0A4",
+        "anchor": "M812 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M813",
+      "summary": "Read two state values.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M813 A%d B%d\\n"
+      },
+      "evidence": {
+        "offset": "0801F0C8",
+        "anchor": "M813 A%d B%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M814",
+      "summary": "A1/B1 trigger maintenance actions.",
+      "board": "machine",
+      "cmd_type": "action",
+      "params": [],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M814 A1\\n / M814 B1\\n"
+      },
+      "evidence": {
+        "offset": "0801F0FC",
+        "anchor": "M814 A1\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M815",
+      "summary": "Read value at settings+0x388.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M815 A%d\\n"
+      },
+      "evidence": {
+        "offset": "0801F15C",
+        "anchor": "M815 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M816",
+      "summary": "Undocumented; echoes 'M816 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M816 A%d\n"
+      },
+      "evidence": {
+        "offset": "0801F0C8",
+        "anchor": "M816 (unreviewed; probe armed only)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M817",
+      "summary": "Read NTC temperature; reports 'NTC Error!!!' on failure.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M817 A%d\\n"
+      },
+      "evidence": {
+        "offset": "0801F190",
+        "anchor": "M817 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M818",
+      "summary": "Read six status values (two shorts + three getters).",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "D",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "E",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "H",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M818 A%d B%d C%d D%d E%d H%d\\n"
+      },
+      "evidence": {
+        "offset": "0801F1D8",
+        "anchor": "M818 A%d B%d C%d D%d E%d H%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M820",
+      "summary": "Undocumented; echoes 'M820 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M820 A%d\n"
+      },
+      "evidence": {
+        "offset": "08021E4C",
+        "anchor": "M820 (screen-channel cluster; verify USB dispatch before probing)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M821",
+      "summary": "Undocumented; echoes 'M821 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M821 A%d\n"
+      },
+      "evidence": {
+        "offset": "08021E7C",
+        "anchor": "M821 (screen-channel cluster; verify USB dispatch before probing)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M822",
+      "summary": "Undocumented; echoes 'M822 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M822 A%d\n"
+      },
+      "evidence": {
+        "offset": "08021EA0",
+        "anchor": "M822 (screen-channel cluster; verify USB dispatch before probing)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M823",
+      "summary": "Undocumented; echoes 'M823 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M823 A%d\n"
+      },
+      "evidence": {
+        "offset": "08021EF8",
+        "anchor": "M823 (screen-channel cluster; verify USB dispatch before probing)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M824",
+      "summary": "Undocumented; echoes 'M824 A%d B%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M824 A%d B%d\n"
+      },
+      "evidence": {
+        "offset": "080221AC",
+        "anchor": "M824 (screen-channel cluster; verify USB dispatch before probing)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M825",
+      "summary": "Undocumented; echoes 'M825 A%d B%d C%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M825 A%d B%d C%d\n"
+      },
+      "evidence": {
+        "offset": "08021F8C",
+        "anchor": "M825 (screen-channel cluster; verify USB dispatch before probing)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M826",
+      "summary": "Undocumented; echoes 'M826 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M826 A%d\n"
+      },
+      "evidence": {
+        "offset": "08021FB8",
+        "anchor": "M826 (screen-channel cluster; verify USB dispatch before probing)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M827",
+      "summary": "Undocumented; echoes 'M827 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M827 A%d\n"
+      },
+      "evidence": {
+        "offset": "08022008",
+        "anchor": "M827 (screen-channel cluster; verify USB dispatch before probing)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M828",
+      "summary": "Undocumented; echoes 'M828 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M828 A%d\n"
+      },
+      "evidence": {
+        "offset": "0802202C",
+        "anchor": "M828 (screen-channel cluster; verify USB dispatch before probing)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M829",
+      "summary": "Read six bytes via FUN_08009c24.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "D",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "E",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "F",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M829 A%d B%d C%d D%d E%d F%d\\n"
+      },
+      "evidence": {
+        "offset": "0801F7E0",
+        "anchor": "M829 A%d B%d C%d D%d E%d F%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M830",
+      "summary": "Undocumented; echoes 'M830 A%d B%d C%d D%d E%d F%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "D",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "E",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "F",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M830 A%d B%d C%d D%d E%d F%d\n"
+      },
+      "evidence": {
+        "offset": "08022508",
+        "anchor": "M830 (unreviewed; probe armed only)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M831",
+      "summary": "Read float value via FUN_08009cf0.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "float",
+          "precision": 1,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M831 A%.1f\\n"
+      },
+      "evidence": {
+        "offset": "0801F84C",
+        "anchor": "M831 A%.1f\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M832",
+      "summary": "Read eight float channels plus their sum.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "float",
+          "precision": 1,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "float",
+          "precision": 1,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "float",
+          "precision": 1,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "D",
+          "type": "float",
+          "precision": 1,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "E",
+          "type": "float",
+          "precision": 1,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "F",
+          "type": "float",
+          "precision": 1,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "G",
+          "type": "float",
+          "precision": 1,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "H",
+          "type": "float",
+          "precision": 1,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "M",
+          "type": "float",
+          "precision": 1,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M832 A%.1f B%.1f C%.1f D%.1f E%.1f F%.1f G%.1f H%.1f SUM%.1f\\n"
+      },
+      "evidence": {
+        "offset": "0801F894",
+        "anchor": "M832 A%.1f B%.1f C%.1f D%.1f E%.1f F%.1f G%.1f H%.1f SUM%.1f\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M833",
+      "summary": "Read float value via FUN_08009cc0.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "float",
+          "precision": 1,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M833 A%.1f\\n"
+      },
+      "evidence": {
+        "offset": "0801F9F8",
+        "anchor": "M833 A%.1f\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M834",
+      "summary": "Undocumented; echoes 'M834 A%d B%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M834 A%d B%d\n"
+      },
+      "evidence": {
+        "offset": "08021FE0",
+        "anchor": "M834 (screen-channel cluster; verify USB dispatch before probing)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M835",
+      "summary": "Undocumented; echoes 'M835 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M835 A%d\n"
+      },
+      "evidence": {
+        "offset": "08022938",
+        "anchor": "M835 (screen-channel cluster; verify USB dispatch before probing)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M836",
+      "summary": "Set nine byte settings (+0x28, +0x38, ...) and apply.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "D",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "E",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "F",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "G",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "H",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "I",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M836 A%d B%d C%d D%d E%d F%d G%d H%d I%d\\n"
+      },
+      "evidence": {
+        "offset": "0801FA88",
+        "anchor": "M836 A%d B%d C%d D%d E%d F%d G%d H%d I%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M837",
+      "summary": "Undocumented; echoes 'M837 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M837 A%d\n"
+      },
+      "evidence": {
+        "offset": "08022050",
+        "anchor": "M837 (screen-channel cluster; verify USB dispatch before probing)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M838",
+      "summary": "Undocumented; echoes 'M838 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M838 A%d\n"
+      },
+      "evidence": {
+        "offset": "080229CC",
+        "anchor": "M838 (screen-channel cluster; verify USB dispatch before probing)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M839",
+      "summary": "Model query; responds A800 (800W).",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M839 A800\\n"
+      },
+      "evidence": {
+        "offset": "0801FD48",
+        "anchor": "M839 A800\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M840",
+      "summary": "Read three state values.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M840 A%d B%d C%d\\n"
+      },
+      "evidence": {
+        "offset": "0801FD64",
+        "anchor": "M840 A%d B%d C%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M841",
+      "summary": "Undocumented; echoes 'M841 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M841 A%d\n"
+      },
+      "evidence": {
+        "offset": "0801FDA4",
+        "anchor": "M841 (unreviewed; probe armed only)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M842",
+      "summary": "Set value and run laser control sequence (FUN_08026474/08026480).",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M842 A%d\\n"
+      },
+      "evidence": {
+        "offset": "0801FDA8",
+        "anchor": "M842 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M843",
+      "summary": "Undocumented; echoes 'M843 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M843 A%d\n"
+      },
+      "evidence": {
+        "offset": "08022AAC",
+        "anchor": "M843 (unreviewed; probe armed only)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M844",
+      "summary": "Set uint16, uint8, uint16; echoed as a hex triple.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "hex",
+          "precision": 2,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "hex",
+          "precision": 2,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "hex",
+          "precision": 2,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M844 {0x%02X, 0x%02X, 0x%02X}\\n"
+      },
+      "evidence": {
+        "offset": "0801FE1C",
+        "anchor": "M844 {0x%02X, 0x%02X, 0x%02X}\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M845",
+      "summary": "Read two state values.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M845 A%d B%d\\n"
+      },
+      "evidence": {
+        "offset": "0801FEC0",
+        "anchor": "M845 A%d B%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M846",
+      "summary": "Undocumented; echoes 'M846 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M846 A%d\n"
+      },
+      "evidence": {
+        "offset": "08022A44",
+        "anchor": "M846 (unreviewed; probe armed only)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M847",
+      "summary": "Set float A and bool C, then read back three values.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "float",
+          "precision": 2,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "float",
+          "precision": 2,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "D",
+          "type": "float",
+          "precision": 2,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M847 A%.2f B%.2f C%d D%.2f\\n"
+      },
+      "evidence": {
+        "offset": "0801FF28",
+        "anchor": "M847 A%.2f B%.2f C%d D%.2f\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M848",
+      "summary": "Read five state values.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "D",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "E",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M848 A%d B%d C%d D%d E%d\\n"
+      },
+      "evidence": {
+        "offset": "0801FFF8",
+        "anchor": "M848 A%d B%d C%d D%d E%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M849",
+      "summary": "Set bytes A, B and mode C on the laser sub-board.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "D",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "E",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M849 A%d\\n / M849 B%d\\n / M849 C%d\\n / M849 D%d\\n / M849 E%d\\n"
+      },
+      "evidence": {
+        "offset": "08020050",
+        "anchor": "M849 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M850",
+      "summary": "Set three emission parameters (A, B, C; each masked to a byte).",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M850 A%d\\n / M850 B%d\\n / M850 C%d\\n"
+      },
+      "evidence": {
+        "offset": "08020218",
+        "anchor": "M850 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M851",
+      "summary": "Undocumented; echoes 'M851 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M851 A%d\n"
+      },
+      "evidence": {
+        "offset": "080202B8",
+        "anchor": "M851 (unreviewed; probe armed only)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M852",
+      "summary": "Undocumented; echoes 'M852 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M852 A%d\n"
+      },
+      "evidence": {
+        "offset": "080202BA",
+        "anchor": "M852 (unreviewed; probe armed only)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M853",
+      "summary": "Set four uint16 values via FUN_08025e24.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "D",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M853 A%d B%d C%d D%d\\n"
+      },
+      "evidence": {
+        "offset": "080202BC",
+        "anchor": "M853 A%d B%d C%d D%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M854",
+      "summary": "Set byte plus three uint16 values via FUN_08025e68.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "D",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M854 A%d B%d C%d D%d\\n"
+      },
+      "evidence": {
+        "offset": "080203B0",
+        "anchor": "M854 A%d B%d C%d D%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M855",
+      "summary": "Set 0/1 mode via FUN_08025c78.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M855 A%d\\n"
+      },
+      "evidence": {
+        "offset": "08020498",
+        "anchor": "M855 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M856",
+      "summary": "Set uint32 at settings+0x188 and apply via FUN_08025c30.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M856 A%d\\n"
+      },
+      "evidence": {
+        "offset": "080204F0",
+        "anchor": "M856 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M857",
+      "summary": "Read integer at settings+0x1b4.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M857 A%d\\n"
+      },
+      "evidence": {
+        "offset": "08020544",
+        "anchor": "M857 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M858",
+      "summary": "Get or set byte via FUN_08025ee0.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M858 A%d\\n"
+      },
+      "evidence": {
+        "offset": "08020568",
+        "anchor": "M858 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M859",
+      "summary": "Board key / CNC enable toggle (0/1) with readback; can enable external control.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M859 A1\\n / M859 A0\\n / M859 A%d\\n"
+      },
+      "evidence": {
+        "offset": "080205D0",
+        "anchor": "M859 A1\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M860",
+      "summary": "Set byte via FUN_08025f58 and apply.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M860 A%d\\n"
+      },
+      "evidence": {
+        "offset": "0802064C",
+        "anchor": "M860 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M861",
+      "summary": "Set byte via FUN_0800b38c and apply.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M861 A%d\\n"
+      },
+      "evidence": {
+        "offset": "08020698",
+        "anchor": "M861 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M862",
+      "summary": "Set uint16 via FUN_0800b4e8 and apply.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M862 A%d\\n"
+      },
+      "evidence": {
+        "offset": "080206EC",
+        "anchor": "M862 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M863",
+      "summary": "Set boolean triple via FUN_08025f04/08025fac/0802b6a0.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M863 A%d\\n"
+      },
+      "evidence": {
+        "offset": "0802073C",
+        "anchor": "M863 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M864",
+      "summary": "Read state value via FUN_0800b354.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M864 A%d\\n"
+      },
+      "evidence": {
+        "offset": "080207AC",
+        "anchor": "M864 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M865",
+      "summary": "Read state value via FUN_0800b3e6.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M865 A%d\\n"
+      },
+      "evidence": {
+        "offset": "080207D0",
+        "anchor": "M865 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M866",
+      "summary": "Set uint32 at settings+0x48 and apply via FUN_080262dc.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M866 A%d\\n"
+      },
+      "evidence": {
+        "offset": "080207F4",
+        "anchor": "M866 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M867",
+      "summary": "Set byte at settings+0x38 and apply via FUN_08025ef8/080262c0.",
+      "board": "machine",
+      "cmd_type": "set",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "motion",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M867 A%d\\n"
+      },
+      "evidence": {
+        "offset": "08020848",
+        "anchor": "M867 A%d\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M868",
+      "summary": "Undocumented; echoes 'M868 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M868 A%d\n"
+      },
+      "evidence": {
+        "offset": "080208B4",
+        "anchor": "M868 (unreviewed; probe armed only)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M869",
+      "summary": "Acknowledged no-op / keepalive.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [],
+      "danger": "none",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M869\\n"
+      },
+      "evidence": {
+        "offset": "080208B8",
+        "anchor": "M869\\n"
+      },
+      "confidence": "high",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M870",
+      "summary": "Undocumented; echoes 'M870 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M870 A%d\n"
+      },
+      "evidence": {
+        "offset": "080208D4",
+        "anchor": "M870 (forwarded to the laser control board via FUN_080208d4)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M871",
+      "summary": "Undocumented; echoes 'M871 A%.2f\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "float",
+          "precision": 2,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M871 A%.2f\n"
+      },
+      "evidence": {
+        "offset": "080208D4",
+        "anchor": "M871 (forwarded to the laser control board via FUN_080208d4)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M873",
+      "summary": "Undocumented; echoes 'M873 A%.2f\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "float",
+          "precision": 2,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M873 A%.2f\n"
+      },
+      "evidence": {
+        "offset": "080208D4",
+        "anchor": "M873 (forwarded to the laser control board via FUN_080208d4)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M874",
+      "summary": "Undocumented; echoes 'M874 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M874 A%d\n"
+      },
+      "evidence": {
+        "offset": "080208D4",
+        "anchor": "M874 (forwarded to the laser control board via FUN_080208d4)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M875",
+      "summary": "Undocumented; echoes 'M875 A%.2f\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "float",
+          "precision": 2,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M875 A%.2f\n"
+      },
+      "evidence": {
+        "offset": "080208D4",
+        "anchor": "M875 (forwarded to the laser control board via FUN_080208d4)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M877",
+      "summary": "Undocumented; echoes 'M877 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M877 A%d\n"
+      },
+      "evidence": {
+        "offset": "080208D4",
+        "anchor": "M877 (forwarded to the laser control board via FUN_080208d4)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M879",
+      "summary": "Undocumented; echoes 'M879 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M879 A%d\n"
+      },
+      "evidence": {
+        "offset": "080208D4",
+        "anchor": "M879 (forwarded to the laser control board via FUN_080208d4)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M881",
+      "summary": "Undocumented; echoes 'M881 A%.2f\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "float",
+          "precision": 2,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M881 A%.2f\n"
+      },
+      "evidence": {
+        "offset": "080208D4",
+        "anchor": "M881 (forwarded to the laser control board via FUN_080208d4)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M885",
+      "summary": "Undocumented; echoes 'M885 A%d B%.2f\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "float",
+          "precision": 2,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M885 A%d B%.2f\n"
+      },
+      "evidence": {
+        "offset": "080208D4",
+        "anchor": "M885 (forwarded to the laser control board via FUN_080208d4)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M886",
+      "summary": "Undocumented; echoes 'M886 A%d B%.2f\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "float",
+          "precision": 2,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M886 A%d B%.2f\n"
+      },
+      "evidence": {
+        "offset": "080208D4",
+        "anchor": "M886 (forwarded to the laser control board via FUN_080208d4)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M887",
+      "summary": "Undocumented; echoes 'M887 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M887 A%d\n"
+      },
+      "evidence": {
+        "offset": "080208D4",
+        "anchor": "M887 (forwarded to the laser control board via FUN_080208d4)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M888",
+      "summary": "Undocumented; echoes 'M888 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M888 A%d\n"
+      },
+      "evidence": {
+        "offset": "080208D4",
+        "anchor": "M888 (forwarded to the laser control board via FUN_080208d4)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M890",
+      "summary": "Undocumented; echoes 'M890 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M890 A%d\n"
+      },
+      "evidence": {
+        "offset": "080208D4",
+        "anchor": "M890 (forwarded to the laser control board via FUN_080208d4)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M891",
+      "summary": "Undocumented; echoes 'M891 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M891 A%d\n"
+      },
+      "evidence": {
+        "offset": "080208D4",
+        "anchor": "M891 (forwarded to the laser control board via FUN_080208d4)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M896",
+      "summary": "Undocumented; echoes 'M896 A%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M896 A%d\n"
+      },
+      "evidence": {
+        "offset": "080208D4",
+        "anchor": "M896 (forwarded to the laser control board via FUN_080208d4)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M897",
+      "summary": "Undocumented; echoes 'M897 A%d B%d C%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [
+        {
+          "name": "A",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "B",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        },
+        {
+          "name": "C",
+          "type": "int",
+          "precision": null,
+          "unit": null,
+          "range": null,
+          "default": null
+        }
+      ],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M897 A%d B%d C%d\n"
+      },
+      "evidence": {
+        "offset": "080208D4",
+        "anchor": "M897 (forwarded to the laser control board via FUN_080208d4)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    },
+    {
+      "code": "M898",
+      "summary": "Undocumented; echoes 'M898 Age counts:%d\\n'.",
+      "board": "machine",
+      "cmd_type": "get",
+      "params": [],
+      "danger": "emission",
+      "side_effects": [],
+      "response": {
+        "kind": "line-echo",
+        "format": "M898 Age counts:%d\n"
+      },
+      "evidence": {
+        "offset": "080208D4",
+        "anchor": "M898 (forwarded to the laser control board via FUN_080208d4)"
+      },
+      "confidence": "medium",
+      "verified": false,
+      "verified_by": null
+    }
+  ]
+}

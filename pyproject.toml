@@ -1,0 +1,25 @@
+[project]
+name = "metalfab"
+version = "0.1.0"
+description = "Diagnostics for the xTool MetalFab 800W"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pyserial>=3.5",
+    "rich>=13",
+    "textual>=8.2.8",
+    "typer>=0.16",
+]
+
+[dependency-groups]
+dev = ["pytest>=8"]
+
+[project.scripts]
+metalfab = "metalfab.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,3 @@
+# Smoke-test anchors for the welding head image.
+Error
+M8

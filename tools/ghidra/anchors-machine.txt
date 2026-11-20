@@ -1,0 +1,62 @@
+# Machine board anchors (Phase 2A, W1/W2/W3/W4/W7)
+--- Device Status (STA) ---
+--- Raycus Status (STR) ---
+--- Laser Ruike Status Report ---
+=== End of Status Report ===
+Raw Status Value: 0x%08X
+Temperature Status: %s
+Fault Status: %s
+Severe Fault: %s
+Power Status: %s
+Interlock 1: %s
+Interlock 2: %s
+Emission Status: %s
+ACDC Status: %s
+Driver %d Status: %s
+Laser Status: %s
+MOD Status: %s
+GATE Mode: %s
+Gas Relay Min Error
+Gas Relay Max Error
+Laser Fault Abnormal
+Laser Fault DC_Power Abnormal
+Laser Fault AC_Power Abnormal
+Laser Fault Current Overhigh
+Laser Fault Voltage Overhigh
+Laser Fault Temp Overhigh
+Laser Fault PD Alarm Abnormal
+M800 A%d
+M801 A%.5f
+M802 A%.5f
+M804 A%d
+M805 A%d B%d C%d D%d E%d F%d
+M807 A%d
+M808
+M812
+M814
+M850 A1 B1
+M850 A0 B0
+M859 A1
+M859 A0
+M859 A%d
+M866 A%d
+M867 A%d
+M869
+M99 A%s.%s
+M107 command error
+M108 command error
+pwm_out error
+NTC Error!!!
+LASER IS ERROR!!!! Dangerous!!!!
+Laser aging test set
+Laser aging test stopped
+The heartbeat packet detection is abnormal
+weld_gun_dc_scan_fault_detect
+protective_mirror_temp_threshold
+gas_pressure_min
+gas_pressure_max
+scan_width_correction
+origin_correction
+focus_correction
+red_laser_set_status
+wide_cleaning_working_flag

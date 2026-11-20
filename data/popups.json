@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "source": {
+    "image": "800W_Machine_APP_V40.71.003.2425.01.B04.bin",
+    "descriptor_offset": 213828,
+    "ram_address": 536920964
+  },
+  "popups": [
+    {
+      "popup": 1,
+      "page": 35
+    },
+    {
+      "popup": 2,
+      "page": 36
+    },
+    {
+      "popup": 3,
+      "page": 37
+    },
+    {
+      "popup": 4,
+      "page": 38
+    },
+    {
+      "popup": 5,
+      "page": 40
+    },
+    {
+      "popup": 6,
+      "page": 39
+    },
+    {
+      "popup": 7,
+      "page": 44
+    },
+    {
+      "popup": 8,
+      "page": 41
+    },
+    {
+      "popup": 9,
+      "page": 42
+    },
+    {
+      "popup": 10,
+      "page": 43
+    },
+    {
+      "popup": 11,
+      "page": 45
+    },
+    {
+      "popup": 12,
+      "page": 58
+    },
+    {
+      "popup": 13,
+      "page": 59
+    }
+  ]
+}

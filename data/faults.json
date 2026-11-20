@@ -1,0 +1,1344 @@
+{
+  "version": 1,
+  "severity_enum": [
+    "info",
+    "warning",
+    "fault",
+    "severe"
+  ],
+  "faults": [
+    {
+      "id": "event.board_key.0.board_key_normal",
+      "source_board": "machine",
+      "source_string": "Board Key Normal",
+      "severity": "info",
+      "explanation": "The machine's USB security key check now passes. This clearance announcement follows a Board Key Abnormal event once a valid key is detected, and it closes the on-screen key alert (popup 4). No action is required.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 0,
+        "subcode": 0
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.board_key.1.board_key_abnormal",
+      "source_board": "machine",
+      "source_string": "Board Key Abnormal",
+      "severity": "fault",
+      "explanation": "The machine cannot detect a valid USB security key, so CNC platform operation is blocked and the touchscreen shows the 'Key not inserted' alert. The likely cause is a missing or loose key. Insert the key; if it is already inserted and the alert persists, the key or the USB port may be faulty and needs service.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 0,
+        "subcode": 1
+      },
+      "verified": false,
+      "popup": {
+        "id": 4,
+        "page": 38
+      },
+      "screen_text": {
+        "title": "Key not inserted",
+        "body": "The key is not inserted. Please insert it."
+      },
+      "causes": [
+        "No valid USB security key detected on the machine's key port.",
+        "Missing, loose, or faulty key; or a damaged key USB port."
+      ],
+      "actions": [
+        "Insert the security key; reseat it if already present.",
+        "If the alert persists with the key inserted, try another key port or have the key/port checked."
+      ],
+      "firmware": [
+        "Dispatcher class 0 sub 1 (target_080271B8.c): FUN_0800bed8(1,3) sets the board-key fault state and FUN_0800c3c8(4) raises popup 4 (page 38).",
+        "When the CNC platform is active (FUN_0800a444() != 0) the same event also prints 'USB Sekey Abnormal Exit CNC_Platform' and exits the platform.",
+        "Sub 0 (normal) clears via FUN_0800bed8(1,0) and dismisses popup 4."
+      ]
+    },
+    {
+      "id": "event.board_key.1.usb_sekey_abnormal_exit_cnc_platform",
+      "source_board": "machine",
+      "source_string": "USB Sekey Abnormal Exit CNC_Platform",
+      "severity": "fault",
+      "explanation": "Variant of Board Key Abnormal that fires when the machine is running under the CNC platform (the platform-state check FUN_0800a444 returns nonzero): the machine exits the CNC platform and logs this message over serial. It appears together with the Board Key Abnormal event and shows the same key alert, so treat it the same way: insert a valid key and restart the platform.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 0,
+        "subcode": 1
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.cnc_platform.0.cnc_platform_communication_normal",
+      "source_board": "machine",
+      "source_string": "CNC_Platform Communication Normal",
+      "severity": "info",
+      "explanation": "The CNC platform controller is answering again. The firmware logs the event and sends 'M859 A1' to re-enable the CNC platform. No operator action is needed; platform motion becomes usable again.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 7,
+        "subcode": 0
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.cnc_platform.1.cnc_platform_communication_abnormal",
+      "source_board": "machine",
+      "source_string": "CNC_Platform Communication Abnormal",
+      "severity": "fault",
+      "explanation": "The machine board lost contact with the CNC platform controller. The firmware logs the event and disables the CNC platform until communication returns; this dispatcher branch raises no popup. Check the CNC-platform link cable and power-cycle the machine; platform motion is unavailable while the fault persists.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 7,
+        "subcode": 1
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null,
+      "causes": [
+        "The CNC-platform (laser control platform) link stopped responding - in the observed episodes this is the laser module's own restart.",
+        "Same root cause family as the heartbeat events: the laser module board rebooting or a marginal link contact."
+      ],
+      "actions": [
+        "If 'The heartbeat packet detection is abnormal!!!' appears just before, treat the laser-module link as the root cause (reseat its connector, inspect the harness).",
+        "Wait for the restart notice to clear (~20 s of stable laser status); if it recurs often, check the link hardware."
+      ],
+      "firmware": [
+        "Dispatcher class 7 code 1 (target_080271B8.c line 440): FUN_080292e4(0) exits CNC mode (forces laser power to 0x32/50, duty, toggles laser-gate functions), then FUN_0802b6e0(1) raises page 72 'The laser module is restarting. Please do not operate the machine.' via FUN_0802def4(0x48).",
+        "Page 72 is outside the popup mechanism (popups only cover pages 35-45/58-59) - it is raised directly and also from the stop-switch-normal path (class 1 code 2) when the restart conditions clear.",
+        "Dismissal: FUN_0800edc8 polls the laser-status transition every >=200 ms and, after 100 consecutive stable polls (~20 s), calls FUN_0802b6e0(0) to dequeue the page and clears the restart flag via FUN_080268d4(0)."
+      ]
+    },
+    {
+      "id": "event.gas_relay.0.gas_relay_normal",
+      "source_board": "machine",
+      "source_string": "Gas Relay Normal",
+      "severity": "info",
+      "explanation": "The shielding-gas pressure has returned to the configured range. The firmware clears the gas flag (settings word +0x1a8, bit 0x80) and dismisses both gas popups (1 and 2). No operator action is needed.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 9,
+        "subcode": 0
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.gas_relay.1.gas_relay_min_error",
+      "source_board": "machine",
+      "source_string": "Gas Relay Min Error",
+      "severity": "warning",
+      "explanation": "The shielding-gas pressure at the weld head fell below the configured minimum. The firmware raises popup 1 and sets the gas flag (settings word +0x1a8, bit 0x80). This is a pressure deviation warning rather than an immediate hazard. Check the gas supply, regulator, and hose, as the on-screen guidance says.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 9,
+        "subcode": 1
+      },
+      "verified": false,
+      "popup": {
+        "id": 1,
+        "page": 35
+      },
+      "screen_text": {
+        "title": "Gas pressure too low",
+        "body": "It is detected that the gas pressure to the weld head is too low. Please check the gas pressure."
+      }
+    },
+    {
+      "id": "event.gas_relay.2.gas_relay_max_error",
+      "source_board": "machine",
+      "source_string": "Gas Relay Max Error",
+      "severity": "warning",
+      "explanation": "The shielding-gas pressure at the weld head rose above the configured maximum. The firmware raises popup 2 and sets the gas flag (settings word +0x1a8, bit 0x80). This is a pressure deviation warning rather than an immediate hazard. Check the regulator setting and the gas supply, as the on-screen guidance says.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 9,
+        "subcode": 2
+      },
+      "verified": false,
+      "popup": {
+        "id": 2,
+        "page": 36
+      },
+      "screen_text": {
+        "title": "Gas pressure too high",
+        "body": "It is detected that the gas pressure to the weld head is too high. Please check the gas pressure."
+      }
+    },
+    {
+      "id": "event.heartbeat.0.detection_normal",
+      "source_board": "machine",
+      "source_string": "The heartbeat packet detection is normal!",
+      "severity": "info",
+      "explanation": "The monitored laser-module link answered again. The firmware reverses the cascade: the wire-feeder comm fault and stop-switch fault clear, the wire feeder is re-enabled, and the laser is re-armed (M850 C1), as seen in the live capture. No operator action is needed.",
+      "popup": null,
+      "screen_text": null,
+      "bit": null,
+      "causes": null,
+      "actions": null,
+      "firmware": null,
+      "evidence": {
+        "offset": "0x080271b8"
+      },
+      "verified": false
+    },
+    {
+      "id": "event.heartbeat.1.detection_abnormal",
+      "source_board": "machine",
+      "source_string": "The heartbeat packet detection is abnormal!!!",
+      "severity": "fault",
+      "explanation": "The machine's 1-second monitor saw ~3 ticks without a fresh answer from the laser-module link. The firmware then trips the wire-feeder comm fault, the stop-switch popup, the alarm lamp and buzzer, and disables the wire feeder while shutting the laser (M850 C0) - all confirmed in the live capture. The likely cause is the laser module's own watchdog reboot. Operator action: note the frequency; if it repeats often, check the laser-module link and harness. No popup id is attached to this event.",
+      "popup": null,
+      "screen_text": null,
+      "bit": null,
+      "causes": [
+        "At boot: a confirmed firmware init-order race - the monitor starts unconditionally (startup 0x080101B0 -> init-array runner -> OS loop -> hardcoded task chain) before the laser link handshake completes, so the first 'abnormal' fires before the first link-live 'M870 A1' (proven in capture 20261118T033159Z).",
+        "After boot: the laser control module stopped answering the 1-second heartbeat for ~3 ticks (3-4 s of silence) - its own watchdog reboot or a marginal link contact.",
+        "The laser board's own comms cycle at power-on (each normal transition needs 3 consecutive 1 s ticks, so a boot burst spans >=9 s, not sub-second).",
+        "Runtime episodes occur at full idle with the laser never enabled, so load and temperature are ruled out by the captured evidence."
+      ],
+      "actions": [
+        "At boot: expect a short burst of abnormal/normal cycles - that is the firmware init race, not a hardware fault; do not chase the connector for boot-time bursts.",
+        "After boot: note the frequency; isolated events are expected during the laser module's own reboots, but recurring episodes point to a marginal link contact.",
+        "Reseat the wire-feeder and laser-module connectors and inspect the harness for strain or damage if runtime episodes recur.",
+        "If episodes recur, capture a session and compare episode intervals - irregular gaps point to a physical contact, fixed periods to a firmware timer."
+      ],
+      "firmware": [
+        "Monitor FUN_080255dc polls the link counter at RAM 0x20000218 every 1 s and trips after 3 dead ticks (caller_080255DC.c).",
+        "The cascade hard-codes the laser-link loss to the wire-feeder fault slot: FUN_080255a8(1) enqueues event class 6 sub 1, raising popup 6 and disabling the wire feeder.",
+        "Class 1 sub 3 (stop switch abnormal) rides along and enqueues 'M850 C0' (laser off) via FUN_0800ec14; recovery enqueues 'M850 C1' (re-arm).",
+        "Downstream echoes are deterministic: 'AC Touch Normal' ~3.1 s and 'Laser Fault Normal' ~14.3-15.5 s after recovery.",
+        "Laser-board side (re/laser/ decompile): the M99 responder runs in the cooperative main loop, so any stall starves it for exactly this 3-4 s window; the app never starts or feeds a watchdog, fault handlers hang rather than reset, and there is no reset-cause handling, so app-crash/watchdog reboots are ruled out.",
+        "Laser-board latent defect: two flash dispatch-table pointers are misaligned by 4 bytes (FUN_080025C4 -> 0x08009B84 vs table at 0x08009B88; FUN_08006318 -> 0x08009BAC vs 0x08009BA8), so a stray F0 frame of type 0x20 could spuriously trigger its reset command (id 0x11) or a hang.",
+        "The touchscreen's restart notice (page 72 'The laser module is restarting...') is raised by the class-7 CNC-platform-comm event and the stop-switch-normal path via FUN_0802b6e0(1) -> FUN_0802def4(0x48); it is dismissed after ~100 stable laser-status polls (~20 s) via FUN_0800edc8.",
+        "No M808 field reflects this fault: the report reads the status struct (+0xd2/+0xdc) while the dispatcher writes the settings struct (+0x1a8/+0x1c0), and class 6 writes no bit anywhere."
+      ],
+      "evidence": {
+        "offset": "0x080271b8"
+      },
+      "verified": false
+    },
+    {
+      "id": "event.laser.0.laser_lock_now",
+      "source_board": "machine",
+      "source_string": "Laser LOCK Now",
+      "severity": "info",
+      "explanation": "The laser's safety lock engaged, so the emission path is blocked. It typically follows an interlock/safety-loop transition or an explicit lock; the machine also self-issues M850 C0/C1 around interlock and stop transitions. No operator action beyond restoring interlocks (doors/lid closed, safety device connected) if emission is needed.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 0
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.laser.1.laser_lock_cancel",
+      "source_board": "machine",
+      "source_string": "Laser LOCK Cancel",
+      "severity": "info",
+      "explanation": "The laser's safety lock was released, so the lock no longer blocks emission. Expected once interlock conditions are restored or the lock is explicitly cancelled. Informational; no operator action.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 1
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.laser.10.laser_fault_ac_power_normal",
+      "source_board": "machine",
+      "source_string": "Laser Fault AC_Power Normal",
+      "severity": "info",
+      "explanation": "All-clear for the AC power fault: the laser module's AC supply state has returned to normal. The firmware only logs this transition. Informational; no operator action.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 10
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.laser.11.laser_fault_ac_power_abnormal",
+      "source_board": "machine",
+      "source_string": "Laser Fault AC_Power Abnormal",
+      "severity": "fault",
+      "explanation": "The laser module reports its AC (mains) power supply as abnormal. Likely causes: mains voltage outside the accepted range, a supply-input problem, or an internal power-stage fault. The firmware only logs this subcode and shows no popup; verify the mains supply and the machine's power input if it recurs, and contact after-sales service if it persists.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 11
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.laser.12.laser_fault_voltage_normal",
+      "source_board": "machine",
+      "source_string": "Laser Fault Voltage Normal",
+      "severity": "info",
+      "explanation": "All-clear for the voltage fault: drive voltage has returned to within limits. The firmware clears the laser-fault flag (state +0x1a8 bit 0x200), dismisses the alarm display, and releases any pending voltage-fault popups. Informational; no operator action.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 12
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.laser.13.laser_fault_voltage_overhigh",
+      "source_board": "machine",
+      "source_string": "Laser Fault Voltage Overhigh",
+      "severity": "fault",
+      "explanation": "The laser drive voltage exceeded its upper limit. Likely causes: a driver-regulation failure, a supply fault, or a defect in the laser module. The firmware raises the alarm, sets the laser-fault flag (state +0x1a8 bit 0x200), records fault code 3 at state +0x1c0, turns emission off, and shows the 'Error code' popup; contact after-sales service if it recurs.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 13
+      },
+      "verified": false,
+      "popup": {
+        "id": 5,
+        "page": 40
+      },
+      "screen_text": {
+        "title": "Error code:",
+        "body": "The power supply for the laser module is abnormal. Please contact our after-sales team for solutions."
+      }
+    },
+    {
+      "id": "event.laser.14.laser_fault_voltage_overlow",
+      "source_board": "machine",
+      "source_string": "Laser Fault Voltage Overlow",
+      "severity": "fault",
+      "explanation": "The laser drive voltage dropped below its lower limit. Likely causes: a failing driver stage, input supply sag, or poor power connections. The firmware raises the alarm, sets the laser-fault flag (state +0x1a8 bit 0x200), records fault code 4 at state +0x1c0, and shows the 'Error code' popup; recurring occurrences warrant after-sales service.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 14
+      },
+      "verified": false,
+      "popup": {
+        "id": 5,
+        "page": 40
+      },
+      "screen_text": {
+        "title": "Error code:",
+        "body": "The power supply for the laser module is abnormal. Please contact our after-sales team for solutions."
+      }
+    },
+    {
+      "id": "event.laser.15.laser_fault_current_normal",
+      "source_board": "machine",
+      "source_string": "Laser Fault Current Normal",
+      "severity": "info",
+      "explanation": "All-clear for the current fault: drive current has returned to within limits. The firmware clears the laser-fault flag (state +0x1a8 bit 0x100) and the current fault indicator. Informational; no operator action.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 15
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.laser.16.laser_fault_current_overhigh",
+      "source_board": "machine",
+      "source_string": "Laser Fault Current Overhigh",
+      "severity": "fault",
+      "explanation": "The laser drive current exceeded its upper limit. Likely causes: a driver fault, a short in the diode path, or a module-internal defect. The firmware raises the alarm, sets the laser-fault flag (state +0x1a8 bit 0x100), records fault code 5 at state +0x1c0, turns emission off, and shows the 'Error code' popup; contact after-sales service if it recurs.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 16
+      },
+      "verified": false,
+      "popup": {
+        "id": 5,
+        "page": 40
+      },
+      "screen_text": {
+        "title": "Error code:",
+        "body": "The power supply for the laser module is abnormal. Please contact our after-sales team for solutions."
+      }
+    },
+    {
+      "id": "event.laser.17.laser_fault_temp_normal",
+      "source_board": "machine",
+      "source_string": "Laser Fault Temp Normal",
+      "severity": "info",
+      "explanation": "All-clear for the temperature fault: laser temperature has returned to within limits. The firmware clears the laser-fault flag (state +0x1a8 bit 0x400) and dismisses the temperature popups. Informational; no operator action.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 17
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.laser.18.laser_fault_temp_overhigh",
+      "source_board": "machine",
+      "source_string": "Laser Fault Temp Overhigh",
+      "severity": "fault",
+      "explanation": "The laser device temperature status reports high temperature, mirrored by bit 1 of the Device Status (STA) raw word; the machine stops work and shows the 'Machine temperature too high' popup. Likely causes: high ambient temperature, blocked ventilation, or a cooling problem. Let the machine cool down, check airflow and cooling, then resume; recurring overheating warrants service.",
+      "bit": {
+        "word": "--- Device Status (STA) ---",
+        "index": 1,
+        "active": 1
+      },
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 18
+      },
+      "verified": false,
+      "popup": {
+        "id": 12,
+        "page": 58
+      },
+      "screen_text": {
+        "title": "Machine temperature too high",
+        "body": "The machine has stopped working due to high ambient temperature. Please wait for it to cool down before resuming operation."
+      }
+    },
+    {
+      "id": "event.laser.19.laser_fault_temp_overlow",
+      "source_board": "machine",
+      "source_string": "Laser Fault Temp Overlow",
+      "severity": "fault",
+      "explanation": "The laser temperature is below its operating range, mirrored by bit 24 of the Device Status (STA) raw word; the machine cannot work and shows the 'Machine temperature too low' popup. Likely cause: ambient temperature at or below the machine's limit. Relocate the machine to an environment above -10 \u00b0C before resuming operation.",
+      "bit": {
+        "word": "--- Device Status (STA) ---",
+        "index": 24,
+        "active": 1
+      },
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 19
+      },
+      "verified": false,
+      "popup": {
+        "id": 13,
+        "page": 59
+      },
+      "screen_text": {
+        "title": "Machine temperature too low",
+        "body": "The machine is unable to work due to low temperature. Please relocate it to an environment above -10\u00b0C for proper operation."
+      }
+    },
+    {
+      "id": "event.laser.2.laser_en_enable",
+      "source_board": "machine",
+      "source_string": "Laser EN enable",
+      "severity": "info",
+      "explanation": "The laser enable (EN) line turned on, arming the laser for emission. Expected at the start of a job or emission sequence. Informational; keep all interlocks and covers in place whenever EN is active.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 2
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.laser.20.laser_fault_pd_alarm_normal",
+      "source_board": "machine",
+      "source_string": "Laser Fault PD Alarm Normal",
+      "severity": "info",
+      "explanation": "All-clear for the photodiode (PD) alarm: monitored laser output has returned to normal. The firmware clears the fault flag (state bit 0x200) and the alarm display. Informational; no operator action.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 20
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.laser.21.laser_fault_pd_alarm_abnormal",
+      "source_board": "machine",
+      "source_string": "Laser Fault PD Alarm Abnormal",
+      "severity": "fault",
+      "explanation": "The photodiode (PD) that monitors laser output reported an alarm, meaning the measured output is abnormal. Likely causes: misaligned or dirty optics, photodiode degradation, or genuine power instability. The firmware raises the alarm, records fault code 6 at state +0x1c0, and shows the 'Error code' popup; inspect and clean the optics and contact after-sales service if the alarm persists.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 21
+      },
+      "verified": false,
+      "popup": {
+        "id": 5,
+        "page": 40
+      },
+      "screen_text": {
+        "title": "Error code:",
+        "body": "The power supply for the laser module is abnormal. Please contact our after-sales team for solutions."
+      }
+    },
+    {
+      "id": "event.laser.22.ruike_laser_fault_acdc_fault_normal",
+      "source_board": "machine",
+      "source_string": "Ruike Laser Fault ACDC Fault Normal",
+      "severity": "info",
+      "explanation": "All-clear for the Ruike ACDC fault: the laser source's AC/DC power stage has returned to normal. The firmware clears the fault flag (state bit 0x2000) and the alarm display. Informational; no operator action.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 22
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.laser.23.ruike_laser_fault_acdc_fault_abnormal",
+      "source_board": "machine",
+      "source_string": "Ruike Laser Fault ACDC Fault Abnormal",
+      "severity": "fault",
+      "explanation": "The Ruike laser source reports an AC/DC power-stage fault, mirrored by bit 0 (ACDC) of the Raycus Status (STR) raw word. Likely causes: a mains/supply problem or an internal power-stage failure. The firmware raises the alarm, records fault code 12 at state +0x1c0, and shows the 'Error code' popup; verify the supply and contact after-sales service if the fault persists.",
+      "bit": {
+        "word": "--- Raycus Status (STR) ---",
+        "index": 0,
+        "active": 1
+      },
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 23
+      },
+      "verified": false,
+      "popup": {
+        "id": 5,
+        "page": 40
+      },
+      "screen_text": {
+        "title": "Error code:",
+        "body": "The power supply for the laser module is abnormal. Please contact our after-sales team for solutions."
+      }
+    },
+    {
+      "id": "event.laser.24.ruike_laser_fault_pd_alarm_normal",
+      "source_board": "machine",
+      "source_string": "Ruike Laser Fault PD Alarm Normal",
+      "severity": "info",
+      "explanation": "All-clear for the Ruike PD alarm: the source's scattered-light/photodiode monitor has returned to normal. The firmware clears the fault flag (state bit 0x1000) and the alarm display. Informational; no operator action.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 24
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.laser.25.ruike_laser_fault_pd_alarm_abnormal",
+      "source_board": "machine",
+      "source_string": "Ruike Laser Fault PD Alarm Abnormal",
+      "severity": "fault",
+      "explanation": "The Ruike laser source reports a scattered-light/photodiode alarm, mirrored by bit 13 ('Scattered Light 1') of the Raycus Status (STR) raw word. Likely causes: stray reflections, optical-path contamination, or a monitor fault. The firmware raises the alarm, records fault code 11 at state +0x1c0, and shows the 'Error code' popup; check optical-path cleanliness and contact after-sales service if the alarm persists.",
+      "bit": {
+        "word": "--- Raycus Status (STR) ---",
+        "index": 13,
+        "active": 1
+      },
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 25
+      },
+      "verified": false,
+      "popup": {
+        "id": 5,
+        "page": 40
+      },
+      "screen_text": {
+        "title": "Error code:",
+        "body": "The power supply for the laser module is abnormal. Please contact our after-sales team for solutions."
+      }
+    },
+    {
+      "id": "event.laser.26.ruike_laser_fault_general_fault_normal",
+      "source_board": "machine",
+      "source_string": "Ruike Laser Fault General Fault Normal",
+      "severity": "info",
+      "explanation": "All-clear for the Ruike general fault: the source's unspecified fault condition has cleared. The firmware clears the fault flag (state bit 0x800) and the alarm display. Informational; no operator action.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 26
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.laser.27.ruike_laser_fault_general_fault_abnormal",
+      "source_board": "machine",
+      "source_string": "Ruike Laser Fault General Fault Abnormal",
+      "severity": "fault",
+      "explanation": "The Ruike laser source reports a general (unspecified) fault; the event does not carry the specific cause. The firmware raises the alarm, records fault code 10 at state +0x1c0, and shows the 'Error code' popup. Contact after-sales service; the underlying failure is not exposed over this event.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 27
+      },
+      "verified": false,
+      "popup": {
+        "id": 5,
+        "page": 40
+      },
+      "screen_text": {
+        "title": "Error code:",
+        "body": "The power supply for the laser module is abnormal. Please contact our after-sales team for solutions."
+      }
+    },
+    {
+      "id": "event.laser.3.laser_en_disable",
+      "source_board": "machine",
+      "source_string": "Laser EN Disable",
+      "severity": "info",
+      "explanation": "The laser enable (EN) line turned off, disarming emission. Expected at job end or whenever the machine disables the laser, including safety-driven stops. Informational; no operator action.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 3
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.laser.4.laser_red_light_en_enable",
+      "source_board": "machine",
+      "source_string": "Laser Red Light EN enable",
+      "severity": "info",
+      "explanation": "The red guide light enable line turned on, activating the red positioning light. Normally seen while framing or positioning a job. Informational; no operator action.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 4
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.laser.5.laser_red_light_en_disable",
+      "source_board": "machine",
+      "source_string": "Laser Red Light EN Disable",
+      "severity": "info",
+      "explanation": "The red guide light enable line turned off, deactivating the red positioning light. Informational; no operator action.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 5
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.laser.6.laser_fault_normal",
+      "source_board": "machine",
+      "source_string": "Laser Fault Normal",
+      "severity": "info",
+      "explanation": "All-clear announcement: the laser fault condition has cleared, and the firmware resets the laser alarm display (FUN_0800bed8(7,0)) and the fault indicator. This string also appears periodically on a healthy machine (observed live), acting as the fault supervisor's normal heartbeat. No operator action needed.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 6
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.laser.7.silent",
+      "source_board": "machine",
+      "source_string": "(silent)",
+      "severity": "info",
+      "explanation": "Event class 4 subcode 7 takes its side effects without printing anything (silent dispatcher branch).",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 7
+      },
+      "verified": false
+    },
+    {
+      "id": "event.laser.8.laser_fault_dc_power_normal",
+      "source_board": "machine",
+      "source_string": "Laser Fault DC_Power Normal",
+      "severity": "info",
+      "explanation": "All-clear for the DC power fault: the laser module's DC supply state has returned to normal. The firmware only logs this transition. Informational; no operator action.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 8
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.laser.9.laser_fault_dc_power_abnormal",
+      "source_board": "machine",
+      "source_string": "Laser Fault DC_Power Abnormal",
+      "severity": "fault",
+      "explanation": "The laser module reports its DC power supply (driver power) as abnormal. Likely causes: a failing driver power stage, loose power connections inside the module, or a module-internal fault. The firmware only logs this subcode and shows no popup, so watch for the generic 'Error code' alert if the condition persists; check power cabling and power-cycle, and contact after-sales service if it recurs.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 4,
+        "subcode": 9
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.lcd_screen.0.lcd_screen_idle_now",
+      "source_board": "machine",
+      "source_string": "LCD Screen idle now!!!",
+      "severity": "info",
+      "explanation": "The screen controller reports it is idle. The firmware resets the screen-work flags and several display and state outputs. Informational; no operator action is needed.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 8,
+        "subcode": 0
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.lcd_screen.1.lcd_screen_work_now",
+      "source_board": "machine",
+      "source_string": "LCD Screen work now!!!",
+      "severity": "info",
+      "explanation": "The screen controller reports it is actively working. The firmware raises popup 11, the 'Laser enabled' notice, which warns that the welding head can emit laser and to wear a mask or safety glasses. Informational; no operator action beyond the safety reminder.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 8,
+        "subcode": 1
+      },
+      "verified": false,
+      "popup": {
+        "id": 11,
+        "page": 45
+      },
+      "screen_text": {
+        "title": "Laser enabled",
+        "body": "Laser has been enabled and the welding head can emit laser. Please wear a mask or a pair of safety glasses."
+      }
+    },
+    {
+      "id": "event.lcd_screen.2.lcd_screen_error_now",
+      "source_board": "machine",
+      "source_string": "LCD Screen error now!!!",
+      "severity": "fault",
+      "explanation": "The screen controller reported an error state. The firmware clears the screen-work flags and disables the wire feeder and related outputs with the same disable calls used by the wire-feeder communication fault, so a screen fault also stops wire feeding. This branch raises no popup id. Check the screen connection and restart the machine; contact after-sales if the fault repeats.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 8,
+        "subcode": 2
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.mcode_test.0.mcode_test_lock_pin",
+      "source_board": "machine",
+      "source_string": "MCODE_TEST Lock Pin",
+      "severity": "info",
+      "explanation": "Factory-test diagnostic: the MCODE test Lock pin state was logged. The dispatcher records the event at normal (info) severity only; no popup, fault state, or alarm is raised. Informational, occurs in factory test mode.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 10,
+        "subcode": 0
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.mcode_test.1.mcode_test_en_pin",
+      "source_board": "machine",
+      "source_string": "MCODE_TEST En Pin",
+      "severity": "info",
+      "explanation": "Factory-test diagnostic: the MCODE test En pin state was logged. The dispatcher records the event at normal (info) severity only; no popup, fault state, or alarm is raised. Informational, occurs in factory test mode.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 10,
+        "subcode": 1
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.mcode_test.2.mcode_test_dac_pin",
+      "source_board": "machine",
+      "source_string": "MCODE_TEST DAC Pin",
+      "severity": "info",
+      "explanation": "Factory-test diagnostic: the MCODE test DAC pin state was logged. The dispatcher records the event at normal (info) severity only; no popup, fault state, or alarm is raised. Informational, occurs in factory test mode.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 10,
+        "subcode": 2
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.mcode_test.3.mcode_test_pwm_pin",
+      "source_board": "machine",
+      "source_string": "MCODE_TEST PWM Pin",
+      "severity": "info",
+      "explanation": "Factory-test diagnostic: the MCODE test PWM pin state was logged. The dispatcher records the event at normal (info) severity only; no popup, fault state, or alarm is raised. Informational, occurs in factory test mode.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 10,
+        "subcode": 3
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.mid_relay.0.mid_relay_ka_ab_detect_link",
+      "source_board": "machine",
+      "source_string": "Mid Relay KA_AB Detect Link",
+      "severity": "info",
+      "explanation": "The machine's relay check reports the KA_AB (A/B safety) relay contacts linked. Informational state announcement logged during relay monitoring; no action is required.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 3,
+        "subcode": 0
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.mid_relay.1.mid_relay_ka_ab_detect_alone",
+      "source_board": "machine",
+      "source_string": "Mid Relay KA_AB Detect Alone",
+      "severity": "info",
+      "explanation": "The machine's relay check reports the KA_AB (A/B safety) relay contacts alone (not linked). Informational state announcement logged during relay monitoring; no action is required.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 3,
+        "subcode": 1
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.mid_relay.2.mid_relay_ctrl_mode_sw_link",
+      "source_board": "machine",
+      "source_string": "Mid Relay Ctrl Mode SW Link",
+      "severity": "info",
+      "explanation": "The machine's relay check reports the control-mode switch (Ctrl Mode SW) relay contacts linked. Informational state announcement logged during relay monitoring; no action is required.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 3,
+        "subcode": 2
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.mid_relay.3.mid_relay_ctrl_mode_sw_alone",
+      "source_board": "machine",
+      "source_string": "Mid Relay Ctrl Mode SW Alone",
+      "severity": "info",
+      "explanation": "The machine's relay check reports the control-mode switch (Ctrl Mode SW) relay contacts alone (not linked). Informational state announcement logged during relay monitoring; no action is required.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 3,
+        "subcode": 3
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.mid_relay.4.mid_relay_safe_sw_rely_link",
+      "source_board": "machine",
+      "source_string": "Mid Relay Safe SW Rely Link",
+      "severity": "info",
+      "explanation": "The machine's relay check reports the safe-switch relay (Safe SW Rely) contacts linked. Informational state announcement logged during relay monitoring; no action is required.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 3,
+        "subcode": 4
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.mid_relay.5.mid_relay_safe_sw_rely_alone",
+      "source_board": "machine",
+      "source_string": "Mid Relay Safe SW Rely Alone",
+      "severity": "info",
+      "explanation": "The machine's relay check reports the safe-switch relay (Safe SW Rely) contacts alone (not linked). Informational state announcement logged during relay monitoring; no action is required.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 3,
+        "subcode": 5
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.mid_relay.6.ac_touch_normal",
+      "source_board": "machine",
+      "source_string": "AC Touch Normal",
+      "severity": "info",
+      "explanation": "The AC touch (mains safety contact) check passed, and the machine records the touch state as normal. Informational announcement; no action is required.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 3,
+        "subcode": 6
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.mid_relay.7.silent",
+      "source_board": "machine",
+      "source_string": "(silent)",
+      "severity": "info",
+      "explanation": "Event class 3 subcode 7 takes its side effects without printing anything (silent dispatcher branch).",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 3,
+        "subcode": 7
+      },
+      "verified": false
+    },
+    {
+      "id": "event.safe_loop.0.safe_loop_abnormal",
+      "source_board": "machine",
+      "source_string": "Safe Loop Abnormal",
+      "severity": "fault",
+      "explanation": "The safety interlock loop is open, so the machine records an interlock fault (status bit 0x10) and cannot enable the laser. This usually means the safety interlock device (door switch or workpiece clamp connection) is not connected. Connect the interlock device; if it is connected and the event persists, inspect the interlock cable and switch.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 1,
+        "subcode": 0
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null,
+      "causes": [
+        "The safety interlock loop is open: the interlock device (door switch or workpiece clamp connection) is unplugged, or its cable/switch is faulty.",
+        "Live capture 20261118T012308Z-e314ab84 recorded the Normal/Abnormal/Normal sequence during device attachment - brief toggling can come from connector bounce."
+      ],
+      "actions": [
+        "Connect the safety interlock device.",
+        "If connected and still faulting, inspect the interlock cable and switch contacts.",
+        "Laser enable is blocked while this fault is active - do not bypass the loop."
+      ],
+      "firmware": [
+        "Dispatcher class 1 sub 0 (target_080271B8.c): sets the safe-loop flag (settings word +0x1a8, bit 0x10) via FUN_0800bed8(4,3) and records the interlock fault.",
+        "Sub 1 (normal) clears it via FUN_0800bed8(4,0) and clears the flag (AND with 0xffffffef)."
+      ]
+    },
+    {
+      "id": "event.safe_loop.1.safe_loop_normal",
+      "source_board": "machine",
+      "source_string": "Safe Loop Normal",
+      "severity": "info",
+      "explanation": "The safety interlock loop has closed, clearing the interlock fault recorded by Safe Loop Abnormal. This typically follows connection of the safety interlock device (the live capture 20261118T012308Z-e314ab84 recorded the Normal/Abnormal/Normal sequence during device attachment). No action is required.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 1,
+        "subcode": 1
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.safe_loop.2.stop_swtich_normal",
+      "source_board": "machine",
+      "source_string": "Stop Swtich Normal",
+      "severity": "info",
+      "explanation": "The emergency stop switch has been released and the stop condition clears. If the machine's fault-code register still holds a pending error state (0x100), the machine also raises the generic 'Error code:' popup (popup 5). Otherwise this is a routine clearance announcement; no action is required.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 1,
+        "subcode": 2
+      },
+      "verified": false,
+      "popup": {
+        "id": 5,
+        "page": 40
+      },
+      "screen_text": null
+    },
+    {
+      "id": "event.safe_loop.3.stop_swtich_abnormal",
+      "source_board": "machine",
+      "source_string": "Stop Swtich Abnormal",
+      "severity": "fault",
+      "explanation": "The emergency stop switch is pressed or its circuit is open. The machine stops and the touchscreen shows the 'Emergency stop button pressed' alert. Release the button by rotating it; if the alert persists, check the stop switch wiring.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 1,
+        "subcode": 3
+      },
+      "verified": false,
+      "popup": {
+        "id": 3,
+        "page": 37
+      },
+      "screen_text": {
+        "title": "Emergency stop button pressed",
+        "body": "The emergency stop button is not released. Please rotate to release it."
+      },
+      "causes": [
+        "The emergency stop button is pressed, or its circuit is open (broken wire, loose contact).",
+        "During heartbeat episodes this event rides along even though the button was never touched: the firmware raises it whenever the stop-switch input is not in its normal state."
+      ],
+      "actions": [
+        "If the button is physically out: rotate it to release.",
+        "If it appears during heartbeat/wire-feeder episodes without anyone touching the button, treat it as a symptom of the underlying link fault, not a separate problem."
+      ],
+      "firmware": [
+        "Dispatcher class 1 sub 3 (target_080271B8.c): raises popup 3 (page 37) and enqueues the laser-off command 'M850 C0' via FUN_0800ec14(s_M850_C0_08027654).",
+        "Sub 2 (normal) enqueues 'M850 C1' (laser re-arm) - the source of the M850 C0/C1 lines seen in captures.",
+        "Clears via FUN_0802b70a(3)."
+      ]
+    },
+    {
+      "id": "event.safe_loop.4.stop_mode_link",
+      "source_board": "machine",
+      "source_string": "Stop Mode Link",
+      "severity": "info",
+      "explanation": "The stop circuit is in linked mode: the stop signal follows the external safety/interlock link, so opening either loop triggers a stop. Informational state announcement; no action is required.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 1,
+        "subcode": 4
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.safe_loop.5.stop_mode_alone",
+      "source_board": "machine",
+      "source_string": "Stop Mode Alone",
+      "severity": "info",
+      "explanation": "The stop circuit is in standalone (alone) mode: the stop switch acts independently of the external link. Informational state announcement; no action is required.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 1,
+        "subcode": 5
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.send_wire.0.send_wire_communicate_normal",
+      "source_board": "machine",
+      "source_string": "Send Wire Communicate Normal",
+      "severity": "info",
+      "explanation": "The wire-feeding module's serial link answered again. The firmware logs 'Send Wire Communicate Normal', clears the fault state, dismisses popup 6, and re-enables the wire feeder. No operator action is needed; it clears the previous anomaly alert.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 6,
+        "subcode": 0
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.send_wire.1.send_wire_communicate_abnormal",
+      "source_board": "machine",
+      "source_string": "Send Wire Communicate Abnormal",
+      "severity": "fault",
+      "explanation": "The wire-feeding module stopped answering the machine board. The firmware raises popup 6, prints 'Send Wire Communicate Abnormal', and runs the wire-feeder disable cascade. In the live capture this same cascade fired on every heartbeat-monitor episode ('The heartbeat packet detection is abnormal!!!'), so a silent laser-module link can present as this fault. Check the wire-feeder power and connection, and the laser-module link harness if heartbeat messages accompany it; contact after-sales if it recurs.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 6,
+        "subcode": 1
+      },
+      "verified": false,
+      "popup": {
+        "id": 6,
+        "page": 39
+      },
+      "screen_text": {
+        "title": "Wire feeding module anomaly detected",
+        "body": "Wire feeding module anomaly detected, unable to continue. Please contact our after-sales team."
+      },
+      "causes": [
+        "The wire-feeder module stopped responding on its serial link, or its link never came up.",
+        "Misattribution confirmed in firmware: a loss on the LASER-MODULE link (heartbeat monitor) is hard-coded to this same fault slot, so check whether 'The heartbeat packet detection is abnormal!!!' appears just before this line - if it does, the real problem is the laser-module link, not the feeder.",
+        "Loose connector, damaged harness, or an unresponsive feeder controller."
+      ],
+      "actions": [
+        "Check whether a heartbeat-abnormal line precedes this event; if so, treat the laser-module link as the prime suspect and reseat its connector first.",
+        "Reseat the wire-feeder connector and inspect the feeder harness and grounding.",
+        "Power-cycle the machine; if the fault recurs with no heartbeat line, the feeder module or its cable needs service."
+      ],
+      "firmware": [
+        "Dispatcher class 6 sub 1 (target_080271B8.c): FUN_0800bed8(10,3) sets the feeder fault state, FUN_0800c3c8(6) raises popup 6 (page 39), then the disable cascade FUN_0800ceb8(0)/FUN_080266f4(0)/FUN_08026608(0)/FUN_080265c4(0) shuts the feeder down.",
+        "Recovery (class 6 sub 0) clears the state via FUN_0800bed8(10,0) and dismisses popup 6 via FUN_0802b70a(6).",
+        "The firmware prints nothing else about the cause; the heartbeat monitor (FUN_080255dc -> FUN_080255a8(1)) is the only upstream that raises this event."
+      ]
+    },
+    {
+      "id": "event.voltage.1.motherboard_voltage_abnormal",
+      "source_board": "machine",
+      "source_string": "Voltage 24V Abnormal",
+      "severity": "fault",
+      "explanation": "The machine measured an out-of-range voltage on a motherboard power rail and shows the 'Abnormal motherboard voltage' alert; the firmware also logs over serial which rail (24V or 5V) is affected. Likely causes are a failing power supply or a wiring problem. Power the machine off and check the supply; if the alert returns after restart, contact after-sales service.",
+      "popup": {
+        "id": 10,
+        "page": 43
+      },
+      "screen_text": {
+        "title": "Abnormal motherboard voltage",
+        "body": "The motherboard voltage is abnormal. Please contact our after-sales team for solutions."
+      },
+      "bit": null,
+      "causes": [
+        "An out-of-range voltage on a motherboard power rail; the serial line names the rail (Voltage 24V or Voltage 5V Abnormal).",
+        "Failing power supply, a wiring/connector problem, or an overloaded rail."
+      ],
+      "actions": [
+        "Power the machine off and check the supply and power connections for the named rail.",
+        "If the alert returns after restart, have the power supply checked."
+      ],
+      "firmware": [
+        "Class 2 is handled outside the main dispatcher: FUN_0800d1cc (caller_0800D1CC.c) raises popup 10 (page 43) on the abnormal record and sets status bit 0x400 via FUN_08026398/FUN_08005150.",
+        "The runtime string comes from the event struct (strings at 0x33058-0x33098: Voltage 24V/5V Normal/Abnormal).",
+        "Sub 3 (normal) clears popup 10 and the status bit."
+      ],
+      "evidence": {
+        "offset": "0x080271b8"
+      },
+      "verified": false
+    },
+    {
+      "id": "event.voltage.3.motherboard_voltage_normal",
+      "source_board": "machine",
+      "source_string": "Voltage 24V Normal",
+      "severity": "info",
+      "explanation": "The motherboard voltage rails (24V and 5V) have returned to their normal range, clearing the voltage fault and closing the 'Abnormal motherboard voltage' popup (popup 10). Clearance announcement; no action is required.",
+      "popup": null,
+      "screen_text": null,
+      "bit": null,
+      "causes": null,
+      "actions": null,
+      "firmware": null,
+      "evidence": {
+        "offset": "0x080271b8"
+      },
+      "verified": false
+    },
+    {
+      "id": "event.weld_gun.0.weld_gun_power_normal",
+      "source_board": "machine",
+      "source_string": "Weld_gun Power Normal",
+      "severity": "info",
+      "explanation": "The welding head's power rail is reporting normal again after a previous Weld_gun Power Abnormal. The firmware logs the clearance, clears the fault state, and dismisses popup 9. No operator action is needed.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 5,
+        "subcode": 0
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.weld_gun.1.weld_gun_power_abnormal",
+      "source_board": "machine",
+      "source_string": "Weld_gun Power Abnormal",
+      "severity": "fault",
+      "explanation": "The machine board detected a power-supply problem on the welding-head link. The firmware raises popup 9, whose page text says the welding head stops working due to communication exceptions; the same popup is shared with the communication fault, so the serial line 'Weld_gun Power Abnormal' is what distinguishes a power fault from a comm fault. Check the welding-head power connection and wiring, then power-cycle; contact after-sales if it repeats.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 5,
+        "subcode": 1
+      },
+      "verified": false,
+      "popup": {
+        "id": 9,
+        "page": 42
+      },
+      "screen_text": {
+        "title": "Welding head communication exceptions",
+        "body": "The welding head stops working due to communication exceptions. Please contact our after-sales team for solutions."
+      }
+    },
+    {
+      "id": "event.weld_gun.2.weld_gun_mirror_temp_normal",
+      "source_board": "machine",
+      "source_string": "Weld_gun Mirror Temp Normal",
+      "severity": "info",
+      "explanation": "The lens-protector (protective mirror) temperature in the welding head has returned to the normal range. The firmware logs the clearance, clears the mirror-temp flag (settings word +0x1a8, bit 0x40) and dismisses popup 8. No operator action is needed.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 5,
+        "subcode": 2
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.weld_gun.3.weld_gun_mirror_temp_abnormal",
+      "source_board": "machine",
+      "source_string": "Weld_gun Mirror Temp Abnormal",
+      "severity": "fault",
+      "explanation": "The lens protector in the welding head reports an out-of-range temperature. The firmware raises popup 8 and sets the mirror-temp flag (settings word +0x1a8, bit 0x40). Likely causes are a dirty or worn lens protector, a cooling problem, or a faulty sensor. Check whether the lens protector needs to be replaced, as the on-screen guidance says.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 5,
+        "subcode": 3
+      },
+      "verified": false,
+      "popup": {
+        "id": 8,
+        "page": 41
+      },
+      "screen_text": {
+        "title": "Lens protector temperature exceptions",
+        "body": "The temperature of the lens protector in the welding head is abnormal. Please check whether the lens protector needs to be replaced."
+      }
+    },
+    {
+      "id": "event.weld_gun.4.weld_gun_communication_normal",
+      "source_board": "machine",
+      "source_string": "Weld_gun Communication Normal",
+      "severity": "info",
+      "explanation": "The serial link to the welding head answered again after a communication fault (observed live as 'Weld_gun Communication Normal'). The firmware logs the clearance, clears the alarm flag set by the abnormal event, and dismisses popup 9. No operator action is needed.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 5,
+        "subcode": 4
+      },
+      "verified": false,
+      "popup": null,
+      "screen_text": null
+    },
+    {
+      "id": "event.weld_gun.5.weld_gun_communication_abnormal",
+      "source_board": "machine",
+      "source_string": "Weld_gun Communication Abnormal",
+      "severity": "fault",
+      "explanation": "The machine board stopped receiving responses from the welding head over the head link. The firmware raises popup 9, the same popup used for Weld_gun Power Abnormal, so the serial string is what distinguishes the two cases. Likely causes are a loose or damaged head cable or connector, or an unresponsive head controller. Power-cycle the machine and reseat the head cable; contact the after-sales team if it persists.",
+      "bit": null,
+      "evidence": {
+        "offset": "0x080271b8",
+        "event_class": 5,
+        "subcode": 5
+      },
+      "verified": false,
+      "popup": {
+        "id": 9,
+        "page": 42
+      },
+      "screen_text": {
+        "title": "Welding head communication exceptions",
+        "body": "The welding head stops working due to communication exceptions. Please contact our after-sales team for solutions."
+      }
+    }
+  ]
+}

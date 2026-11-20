@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "commands": {
+    "M99": {
+      "verified": true,
+      "verified_by": "capture:20261118T015442Z-15adc177"
+    },
+    "M808": {
+      "verified": true,
+      "verified_by": "capture:20261118T005338Z-ee22f64e"
+    },
+    "M350": {
+      "verified": true,
+      "verified_by": "capture:20261118T045513Z-08ae4e72"
+    },
+    "M351": {
+      "verified": true,
+      "verified_by": "capture:20261118T045435Z-f7667a77"
+    }
+  },
+  "faults": {
+    "event.safe_loop.0.safe_loop_abnormal": {
+      "verified": true,
+      "verified_by": "capture:20261118T012308Z-e314ab84"
+    },
+    "event.safe_loop.1.safe_loop_normal": {
+      "verified": true,
+      "verified_by": "capture:20261118T012308Z-e314ab84"
+    }
+  }
+}

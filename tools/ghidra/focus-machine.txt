@@ -1,0 +1,17 @@
+# Machine board focus functions (entry addresses observed in anchor dump)
+0801ebe4  # M800/M801/M802/M804/M805/M806 handler cluster
+0801ef20  # M807
+0801ef70  # M808
+0800cfc4  # M850 A1 B1 (emission on) / M812
+0800d004  # M850 A0 B0 (emission off) / M812
+080205d0  # M859
+080207f4  # M866
+08020848  # M867
+080208b8  # M869
+080208f8  # M99 (version + serial)
+0801bb9c  # status report builder
+080271b8  # event/fault dispatcher
+080268a0  # worker called by M869 and M850
+0800a424  # settings struct getter
+08016bb2  # M-parameter parser
+080027e0  # line print helper
