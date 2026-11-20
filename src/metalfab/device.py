@@ -23,6 +23,12 @@ from .reports import Decoder, Event, Line, Report
 
 DEFAULT_BAUD = 230400
 DISPLAY_FIELDS = ("language", "imperial_units")
+
+# Getter codes cleared for unaided single-shot probing. Each one still has to
+# satisfy the registry triple (danger none, confidence high, cmd_type get) at
+# transmission time; this allowlist is the per-command review, not a blanket
+# registry shortcut.
+PROBE_GETTERS = frozenset({"M100", "M112"})
 _ADAPTERS = {(0x1A86, 0x7523): "CH340", (0x28E9, 0x018A): "GD32 CDC"}
 _HJ004_BOARDS = ("machine", "screen", "laser_control", "welding_head")
 _VERSION_NUMBER = r"[0-9]{2}\.[0-9]{2}\.[0-9]{3}\.[0-9]{4}\.[0-9]{2}\.B[0-9]+"
@@ -522,6 +528,68 @@ class Session:
         if self._profile is None or not self._profile.versions:
             raise DeviceError("No reviewed version getter is available. Check the vendor UI.")
         return self._request(self._profile.versions, command_type="get", response="versions")
+
+    def raw(self, wire: str, *, armed: bool, force_unverified: bool,
+            allow_emission: bool = False, timeout: float = 5.0,
+            quiescence: float = 1.0) -> dict:
+        """Send one command outside the reviewed profile, single-shot.
+
+        Unaided only for PROBE_GETTERS codes that also pass the registry
+        triple (danger none, confidence high, cmd_type get). Everything else
+        requires arming with an explicit force-unverified flag, and registry
+        emission/destructive codes additionally require allow_emission. The
+        transmitted bytes are exactly the wire argument; there is no batch or
+        loop anywhere in this path.
+        """
+        parts = wire.split()
+        if not parts or wire != " ".join(parts) or not wire.isprintable():
+            raise DeviceError("Invalid framing in the raw request")
+        code = parts[0]
+        entry = self._evidence.commands.get(code)
+        unaided = (code in PROBE_GETTERS and entry is not None
+                   and entry["danger"] == "none" and entry["confidence"] == "high"
+                   and entry["cmd_type"] == "get")
+        if not armed and not unaided:
+            raise DeviceError(
+                f"{code} is not a reviewed probe getter. Re-run with "
+                f"--arm --force-unverified {wire!r} to send it anyway."
+            )
+        if armed and not force_unverified:
+            raise DeviceError("--force-unverified is required with --arm")
+        if armed and entry is not None and entry["danger"] in ("emission", "destructive") \
+                and not allow_emission:
+            raise DeviceError(
+                f"{code} is classified {entry['danger']}; add --allow-emission only if you mean it."
+            )
+        deadline = time.monotonic() + timeout
+        try:
+            while pending := self._connection.in_waiting:
+                list(self.receive(size=min(pending, 4096)))
+                if time.monotonic() >= deadline:
+                    raise DeviceError("The serial stream did not settle before the request")
+            if self._decoder.reports.in_report or self._decoder.lines.has_fragment:
+                raise DeviceError("The serial stream contains an incomplete message")
+            raw_wire = wire.encode("ascii") + b"\n"
+            if self._write_bytes(raw_wire) != len(raw_wire):
+                raise DeviceError("Serial write was incomplete")
+            lines: list[str] = []
+            last_data = time.monotonic()
+            while time.monotonic() < deadline:
+                for event in self.receive():
+                    line = event.line
+                    if line is None or line.issue:
+                        continue
+                    lines.append(line.text)
+                    last_data = time.monotonic()
+                if lines and time.monotonic() - last_data >= quiescence:
+                    break
+            if not lines:
+                raise DeviceError(f"No response to {code} within {timeout:g} seconds")
+            return {"code": code, "lines": lines, "truncated": False}
+        except BaseException:
+            list(self.finish())
+            self._connection.close()
+            raise
 
     def read_block(self, spec: Request, *, quiescence: float = 1.0) -> dict:
         """Collect a multi-line response that has no command echo.

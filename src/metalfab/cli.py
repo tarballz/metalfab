@@ -20,6 +20,7 @@ from .contracts import Evidence, load_evidence
 from .device import DEFAULT_BAUD, DeviceError, Profile, Session, live_session, ports, select_profile
 from .inventory import firmware_plan, inspect_firmware, load_stock_head, stock_images
 from .logs import parse_job_index, parse_system_log
+from .overlay import write_verification
 from .reports import Event, Report
 from .settings import settings_diff, settings_snapshot
 
@@ -258,6 +259,68 @@ def cnc(
                 typer.echo(f"CNC mode is now {target}.")
             else:
                 typer.echo(f"CNC mode is {session.cnc_state()}.")
+    except EXPECTED_ERRORS as error:
+        _fail(error)
+
+
+@app.command()
+def raw(
+    ctx: typer.Context,
+    wire: str = typer.Argument(..., help="Exact command line to send, e.g. 'M112'."),
+    port: str = typer.Option(...), device_version: str = typer.Option(...),
+    arm: bool = typer.Option(False, "--arm", help="Send a code outside the reviewed probe getters."),
+    force_unverified: bool = typer.Option(False, "--force-unverified",
+                                          help="Required with --arm: you accept the code is unverified."),
+    allow_emission: bool = typer.Option(False, "--allow-emission",
+                                        help="Required for registry emission/destructive codes."),
+    record: bool = typer.Option(False, "--record",
+                                help="After a successful reply, record it in the verified overlay."),
+    as_json: bool = typer.Option(False, "--json"),
+) -> None:
+    """Send one raw command under the probe gates. Single-shot; never batched."""
+    evidence = _evidence(ctx)
+    try:
+        profile = select_profile(evidence, device_version)
+        with live_session(port, evidence, profile=profile, baud=profile.baud) as session:
+            _recording(session)
+            result = session.raw(wire, armed=arm, force_unverified=force_unverified,
+                                 allow_emission=allow_emission)
+            if record:
+                code = result["code"]
+                if code not in evidence.commands:
+                    raise DeviceError(f"{code} is not in the registry; it cannot be recorded in the overlay")
+                write_verification(ctx.obj, "commands", code, f"capture:{session.capture.path.name}")
+                errors.print(Text(f"Recorded {code} in the verified overlay.", style="yellow"))
+            if as_json:
+                typer.echo(json.dumps(result, indent=2))
+                return
+            for line in result["lines"]:
+                output.print(Text(line))
+    except EXPECTED_ERRORS as error:
+        _fail(error)
+
+
+@app.command()
+def verify(
+    ctx: typer.Context,
+    command: str | None = typer.Option(None, "--command", help="Registry command code, e.g. M100."),
+    fault: str | None = typer.Option(None, "--fault", help="Fault id from data/faults.json."),
+    capture: str = typer.Option(..., "--capture", help="Capture id that proves the observation."),
+) -> None:
+    """Record a live observation in the verified overlay (the only data file we write)."""
+    if (command is None) == (fault is None):
+        raise typer.BadParameter("Choose exactly one of --command or --fault")
+    evidence = _evidence(ctx)
+    try:
+        if command is not None:
+            if command not in evidence.commands:
+                raise DeviceError(f"{command} is not in the command registry")
+            write_verification(ctx.obj, "commands", command, capture)
+        else:
+            if fault not in evidence.faults:
+                raise DeviceError(f"{fault} is not in the fault registry")
+            write_verification(ctx.obj, "faults", fault, capture)
+        typer.echo(f"Recorded {command or fault} with {capture}.")
     except EXPECTED_ERRORS as error:
         _fail(error)
 

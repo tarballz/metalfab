@@ -68,6 +68,23 @@ firing after a fault. `--enable`/`--disable` preview the reviewed M859 A1/A0
 change; `--apply` rechecks the current state, sends once, and verifies by
 read-back.
 
+### Probing and verification
+
+```sh
+uv run metalfab raw "M112" --port /dev/cu.usbmodemYOURDEVICE --device-version 40.71.003.2425.01.B04
+uv run metalfab raw "M812" --arm --force-unverified --port ... --device-version ... --record
+uv run metalfab verify --command M99 --capture capture:20261118T045435Z-f7667a77
+uv run metalfab verify --fault event.heartbeat.1.detection_abnormal --capture capture:...
+```
+
+`raw` sends exactly one command under strict gates: reviewed probe getters
+(`M100`, `M112`) go unaided, everything else needs `--arm
+--force-unverified` with the exact wire retyped, and registry
+emission/destructive codes additionally need `--allow-emission`. `--record`
+writes a successful reply into the verified overlay. `verify` records a live
+observation manually. See `docs/probe-runbook.md` for the probe order and the
+known traps. The overlay is the only data file the tool ever writes.
+
 ### Settings and firmware
 
 ```sh
