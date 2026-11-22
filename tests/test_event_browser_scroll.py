@@ -9,15 +9,6 @@ from metalfab.live import History, TimedEvent
 from metalfab.reports import Event, Line
 from metalfab.tui_views import EventBrowser
 
-CSS = """
-EventBrowser { height: 1fr; }
-.event-filter { height: 1; width: 24; }
-EventBrowser DataTable { height: 1fr; }
-.event-detail-scroll { height: 5; }
-.event-detail { height: auto; }
-"""
-
-
 def _history(start: int, count: int) -> History:
     """Build a history of short serial lines with sequences start..start+count-1."""
     events = tuple(
@@ -28,6 +19,15 @@ def _history(start: int, count: int) -> History:
 
 
 class _BrowserApp(App[None]):
+    CSS = """
+    EventBrowser { height: 1fr; }
+    .event-filter { height: 1; width: 24; }
+    EventBrowser DataTable { height: 1fr; }
+    .detail-resizer { height: 1; }
+    .event-detail-scroll { height: 5; }
+    .event-detail { height: auto; }
+    """
+
     def __init__(self, follow: bool) -> None:
         super().__init__()
         self._follow = follow
@@ -161,3 +161,60 @@ def test_reset_starts_live_pinned_and_replay_at_the_top() -> None:
         assert table.cursor_row == 0
 
     _drive(replay, replay_actions)
+
+
+def _detail_height(app: _BrowserApp) -> int:
+    from textual.containers import VerticalScroll
+
+    detail = app.query_one(EventBrowser).query_one(".event-detail-scroll", VerticalScroll)
+    return detail.size.height
+
+
+def test_detail_pane_drag_resizes() -> None:
+    app = _BrowserApp(follow=True)
+
+    async def actions(pilot, app):
+        await pilot.pause()
+        browser = app.query_one(EventBrowser)
+        assert _detail_height(app) == 5
+        resizer = browser.query_one(".detail-resizer")
+        # Dragging the boundary up grows the detail pane by the same amount.
+        await pilot.mouse_down(resizer, offset=(0, 0))
+        await pilot.mouse_up(resizer, offset=(0, -4))
+        await pilot.pause()
+        assert _detail_height(app) == 9
+
+    _drive(app, actions)
+
+
+def test_detail_pane_drag_clamps_to_minimum() -> None:
+    app = _BrowserApp(follow=True)
+
+    async def actions(pilot, app):
+        await pilot.pause()
+        browser = app.query_one(EventBrowser)
+        resizer = browser.query_one(".detail-resizer")
+        # Dragging far down must not collapse the pane below its minimum.
+        await pilot.mouse_down(resizer, offset=(0, 0))
+        await pilot.mouse_up(resizer, offset=(0, 5))
+        await pilot.pause()
+        assert _detail_height(app) == 2
+
+    _drive(app, actions)
+
+
+def test_detail_pane_keybindings_resize() -> None:
+    app = _BrowserApp(follow=True)
+
+    async def actions(pilot, app):
+        await pilot.pause()
+        table = app.table()
+        await pilot.click(table, offset=(2, 1))
+        await pilot.press("ctrl+up")
+        await pilot.pause()
+        assert _detail_height(app) == 7
+        await pilot.press("ctrl+down", "ctrl+down")
+        await pilot.pause()
+        assert _detail_height(app) == 3
+
+    _drive(app, actions)

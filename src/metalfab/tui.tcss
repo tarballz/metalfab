@@ -161,6 +161,15 @@ EventBrowser DataTable {
     background: #17222d;
 }
 
+.detail-resizer {
+    height: 1;
+    background: #24344a;
+}
+
+.detail-resizer:hover {
+    background: #8ee3db;
+}
+
 .event-detail-scroll {
     height: 5;
     padding: 0 1;
