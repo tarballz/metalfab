@@ -210,11 +210,33 @@ def test_detail_pane_keybindings_resize() -> None:
         await pilot.pause()
         table = app.table()
         await pilot.click(table, offset=(2, 1))
-        await pilot.press("ctrl+up")
+        await pilot.press("=")
         await pilot.pause()
         assert _detail_height(app) == 7
-        await pilot.press("ctrl+down", "ctrl+down")
+        await pilot.press("-", "-")
         await pilot.pause()
         assert _detail_height(app) == 3
+
+    _drive(app, actions)
+
+
+def test_detail_pane_resizes_from_release_position_without_motion() -> None:
+    """A terminal that never reports held-button motion still resizes on release."""
+    from textual.events import MouseUp
+
+    app = _BrowserApp(follow=True)
+
+    async def actions(pilot, app):
+        await pilot.pause()
+        browser = app.query_one(EventBrowser)
+        resizer = browser.query_one(".detail-resizer")
+        await pilot.mouse_down(resizer, offset=(0, 0))
+        start_y = browser._drag_start_y
+        # Only the release arrives, six rows above the grab point.
+        release = MouseUp(None, 0, 0, 0, 0, 1, False, False, False, 0, start_y - 6, None)
+        browser._end_resize(release)
+        await pilot.pause()
+        assert _detail_height(app) == 11
+        assert not browser._resizing
 
     _drive(app, actions)

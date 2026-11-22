@@ -163,7 +163,7 @@ EventBrowser DataTable {
 
 .detail-resizer {
     height: 1;
-    background: #24344a;
+    background: #33507a;
 }
 
 .detail-resizer:hover {

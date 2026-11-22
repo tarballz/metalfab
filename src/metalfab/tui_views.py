@@ -48,8 +48,8 @@ class EventBrowser(Vertical):
     """A filterable event table with a resizable details pane below it."""
 
     BINDINGS = [
-        Binding("ctrl+up", "grow_detail", "Grow detail"),
-        Binding("ctrl+down", "shrink_detail", "Shrink detail"),
+        Binding("=", "grow_detail", "Grow detail", key_display="+"),
+        Binding("-", "shrink_detail", "Shrink detail"),
     ]
 
     def __init__(self, *, id: str, follow: bool = True) -> None:
@@ -103,13 +103,20 @@ class EventBrowser(Vertical):
     def _drag_resize(self, event: MouseMove) -> None:
         if self._resizing:
             # Dragging the boundary up grows the pane; down shrinks it.
-            self._set_detail_cells(self._drag_start_cells + self._drag_start_y - event.screen_y)
+            self._resize_from(event.screen_y)
 
     @on(MouseUp)
-    def _end_resize(self) -> None:
+    def _end_resize(self, event: MouseUp) -> None:
         if self._resizing:
             self._resizing = False
             self.release_mouse()
+            # Terminals that never report held-button motion still report the
+            # release position, so apply it here too: click-drag works everywhere.
+            self._resize_from(event.screen_y)
+
+    def _resize_from(self, screen_y: int) -> None:
+        """Size the detail pane from a pointer position relative to the drag start."""
+        self._set_detail_cells(self._drag_start_cells + self._drag_start_y - screen_y)
 
     def on_mount(self) -> None:
         table = self.query_one(DataTable)
