@@ -8,6 +8,10 @@ from textual.app import ComposeResult
 from textual.containers import Horizontal, Vertical, VerticalScroll
 from textual.screen import ModalScreen
 from textual.widgets import Button, DataTable, Select, Static
+from typing import TYPE_CHECKING, cast
+
+if TYPE_CHECKING:
+    from textual.widgets._data_table import RowKey
 
 from .live import History, TimedEvent
 from .reports import Line, Report
@@ -87,8 +91,16 @@ class EventBrowser(Vertical):
         table = self.query_one(DataTable)
         row = table.cursor_row
         previous = self._visible[row].sequence if row < len(self._visible) else None
-        # Follow new traffic when the operator has left the cursor on the last row.
-        follow = self._follow and (reset or row >= len(self._visible) - 1)
+        # Follow new traffic only while the viewport sits at the bottom. Scrolling
+        # up (wheel, scrollbar, or keys) unpins it and the view must stay put;
+        # scrolling back to the very bottom re-pins it. A reset starts the live
+        # browser pinned and the replay browser at the top.
+        pinned = self._follow if reset else (
+            self._follow and table.is_vertical_scroll_end
+            and not table.is_vertical_scrollbar_grabbed
+        )
+        scroll_y = table.scroll_y
+        removed_height = 0
         if reset or not entries or not self._visible:
             table.clear()
             added = entries
@@ -97,6 +109,7 @@ class EventBrowser(Vertical):
             for entry in self._visible:
                 if entry.sequence >= entries[0].sequence:
                     break
+                removed_height += table.get_row_height(cast("RowKey", str(entry.sequence)))
                 table.remove_row(str(entry.sequence))
             last = self._visible[-1].sequence
             added = [entry for entry in entries if entry.sequence > last]
@@ -105,10 +118,25 @@ class EventBrowser(Vertical):
             kind, description = self._describe(entry, serial_line=selection == "lines")
             table.add_row(f"{entry.elapsed:.2f}s", kind, Text(description[:160]), key=str(entry.sequence))
         if entries:
-            row = len(entries) - 1 if follow else 0 if reset else next(
-                (index for index, item in enumerate(entries) if item.sequence == previous), 0,
-            )
-            table.move_cursor(row=row)
+            if pinned:
+                row = len(entries) - 1
+            elif reset:
+                row = 0
+            else:
+                row = next(
+                    (index for index, item in enumerate(entries) if item.sequence == previous), 0,
+                )
+            # scroll=False while unpinned: the cursor may sit off-screen, and
+            # move_cursor must not yank the viewport back to its row.
+            table.move_cursor(row=row, scroll=pinned)
+            if not pinned and not reset:
+                # Rows removed from the top shift the content up by their height;
+                # push the viewport back down by the same amount to keep it anchored.
+                # Deferred so it runs after the cursor watcher's scroll-into-view,
+                # which move_cursor schedules on every cursor change.
+                table.call_after_refresh(
+                    table.scroll_to, y=scroll_y + removed_height, animate=False, immediate=True,
+                )
         self._show_detail()
 
     def _describe(self, entry: TimedEvent, *, serial_line: bool) -> tuple[str, str]:
