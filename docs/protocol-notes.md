@@ -472,3 +472,30 @@ M351 pulls the full 100-record ring without an echo; M350 answers
 file is created lazily). Both recorded in data/verified-overlay.json with
 their capture ids. M350's response carries no command echo and no terminator;
 the block collector treats stream quiescence as its completion signal.
+
+### Main board replaced; fault resolved (2026-11-22)
+
+The motherboard was replaced after the escalating fault episodes. The
+replacement arrived with older firmware and was updated through xTool
+Studio. After the update, `metalfab firmware versions` reported all four
+boards current: machine `40.71.003.2425.01.B04`, screen
+`40.71.003.2540.01.B03`, laser control `40.71.001.2622.01.B01`, welding head
+`40.70.006.2722.01.B01` (the head went from B02 to B01 in the vendor update).
+
+The wire-feeder/heartbeat fault has not returned on the new board. This is
+the hardware-side confirmation of the root-cause analysis: the escalating
+episodes, the long outage, and the hang all originated in the old main
+board's laser-module link, not in the laser module or the wire feeder. The
+misattribution to the wire-feeder fault slot remains a firmware defect worth
+reporting (a link loss should surface as a laser-communication fault), but
+the recurring episodes themselves were the old board.
+
+All 24 reviewed settings getters returned live values on the new board
+(capture `20261122T093746Z-b2e66372`), recorded in the verification
+overlay. Several values match what the old board reported before the
+replacement (M818 A3408 B2991, M845 A451, M832 all channels zero), which
+supports treating them as defaults rather than board-specific state.
+
+After the Studio update, `metalfab cnc` reported CNC mode A0 (disabled),
+consistent with the update or the board swap having cleared it. Nothing
+re-enables it automatically.
